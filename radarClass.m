@@ -13,8 +13,9 @@ classdef radarClass
         %% waveform Parameters 
         TpTrack
         TpSearch
-        PRI 
-        Freq
+        PRISearch
+        PRITrack
+        freq
         
         %% RRE parameters
         PPeak
@@ -23,7 +24,13 @@ classdef radarClass
         rangeTrack
         rangeSearch
         azCoverage
-        elCoverage
+        elCoverageS %search
+        elCoverageT %track
+        solidAngleTrack
+        solidAngleSearch
+        beamWidthTrack
+        beamWidthSearch
+        
         
         
         %requirments 
@@ -43,11 +50,14 @@ classdef radarClass
             
             radar.antennaSizeX = 5;
             radar.antennaSizeY = 5; 
+            radar.azCoverage = 2*pi; 
             
             %enter in required values
             radar.R_rangeResTrack = 10;
             radar.R_rangeResSearch = 30; 
             radar.R_warningTime = 5*60; 
+            
+            radar.freq = 1*10^9;
             
             
             radar.type = dewdsType;
@@ -57,8 +67,9 @@ classdef radarClass
                 
              
             elseif radar.type == "dewds2" 
-                radar.rangeSearch = [300 30*10^3];
+                radar.rangeTrack = [300 30*10^3];
                 radar.numAntenna = 4; 
+                
             end 
         end
 
