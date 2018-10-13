@@ -7,6 +7,22 @@ import radarClass
 % Ally Jennings 
 % Sarah Preston 
 
+%% constants 
+c = physconst("lightspeed"); 
+k = 10^3;
+u = 10^-6;
 
-dewds1 = radarClass("search");
-dewds1.range
+%functions
+rangeRes = @(Tp) (c/2)*Tp;
+
+%dragon defintions 
+
+
+%% set paramters, create radar objects
+dewds1 = radarClass("dewds1");
+dewds2 = radarClass("dewds2");
+
+%% calculation requirements
+
+
+%% check requirements 
