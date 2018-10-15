@@ -57,14 +57,42 @@ dewds2.solidAngleTrack = solidAngle(dewds2.elCoverageT);
 
 %beamWidth @ 1 GHz
 GHz = 1*10^9;
-dewds1BW_preCalc = beamWidth(1*GHz, dewds1.antennaSizeX);
-dewds2BW_preCalc = beamWidth(1*GHz, dewds2.antennaSizeX);
+if dewds1.EleniGraphs == 1
+    for i = 1:8
+        dewds1BW_preCalc(i) = beamWidth(dewds1.freq(i), dewds1.antennaSizeX);
+        dewds2BW_preCalc(i) = beamWidth(dewds2.freq(i), dewds2.antennaSizeX); 
 
-%beamwidth for Radar Freq
-dewds1.beamWidthSearch = beamWidth(dewds1.freq, dewds1.antennaSizeX);
+        %beamwidth for Radar Freq
+        dewds1.beamWidthSearch(i) = beamWidth(dewds1.freq(i), dewds1.antennaSizeX);
+        dewds2.beamWidthSearch(i) = beamWidth(dewds2.freq(i), dewds2.antennaSizeX);
+        dewds2.beamWidthTrack(i) = beamWidth(dewds2.freq(i), dewds2.antennaSizeX);    
+    end   
+else
+    dewds1BW_preCalc = beamWidth(1*GHz, dewds1.antennaSizeX);
+    dewds2BW_preCalc = beamWidth(1*GHz, dewds2.antennaSizeX);
 
-dewds2.beamWidthSearch = beamWidth(dewds2.freq, dewds2.antennaSizeX);
-dewds2.beamWidthTrack = beamWidth(dewds2.freq, dewds2.antennaSizeX);
-
+    %beamwidth for Radar Freq
+    dewds1.beamWidthSearch = beamWidth(dewds1.freq, dewds1.antennaSizeX);
+    dewds2.beamWidthSearch = beamWidth(dewds2.freq, dewds2.antennaSizeX);
+    dewds2.beamWidthTrack = beamWidth(dewds2.freq, dewds2.antennaSizeX);
+end
 
 %% check requirements 
+plot(dewds1.beamWidthSearch,dewds1.freq)
+title('fc vs Beamwidth')
+xlabel('Beamwidth')
+ylabel('fc')
+
+figure
+subplot(1,2,1)
+plot(dewds1.dopavg,dewds1.freq)
+title('fc vs Doppler(avg)')
+xlabel('Doppler')
+ylabel('fc')
+
+subplot(1,2,2)
+plot(dewds1.dopmax,dewds1.freq)
+title('fc vs Doppler(max)')
+xlabel('Doppler')
+ylabel('fc')
+
