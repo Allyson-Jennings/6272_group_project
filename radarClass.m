@@ -6,8 +6,10 @@ classdef radarClass
         EleniGraphs = 1;      
   
         type %dewds 1 or dewds 2
-        dopmax
-        dopavg
+        
+        %Frequency
+        dopMax
+        dopAvg
         
         %% Antenna Parameters
         antennaSizeX
@@ -21,6 +23,9 @@ classdef radarClass
         PRISearch
         PRITrack
         freq
+        %% waveform Parameters for graphs
+        PRFAvgMin
+        PRFMaxMin
         
         %% RRE parameters
         PPeak
@@ -64,12 +69,16 @@ classdef radarClass
             
             if radar.EleniGraphs==1
             	radar.freq = [1*10^9 3*10^9 5*10^9 10*10^9 15*10^9 35*10^9 70*10^9 90*10^9];
-                radar.dopavg = (4*200)./(physconst("lightspeed")./radar.freq);     %500 is max, 200 is average           
-                radar.dopmax = (4*500)./(physconst("lightspeed")./radar.freq);
+                radar.dopAvg = (2*200)./(physconst("lightspeed")./radar.freq);     %500 is max, 200 is average           
+                radar.dopMax = (2*500)./(physconst("lightspeed")./radar.freq);
+                radar.PRFAvgMin = (4*200)./(physconst("lightspeed")./radar.freq);     %500 is max, 200 is average           
+                radar.PRFMaxMin = (4*500)./(physconst("lightspeed")./radar.freq);           
             else
             	radar.freq = 1*10^9;
-                radar.dopmax = (4*500)/(physconst("lightspeed")/radar.freq);
-                radar.dopavg = (4*200)/(physconst("lightspeed")/radar.freq);
+                radar.dopMax = (2*500)/(physconst("lightspeed")/radar.freq);
+                radar.dopAvg = (2*200)/(physconst("lightspeed")/radar.freq);
+                radar.PRFMaxMin = (4*500)/(physconst("lightspeed")/radar.freq);
+                radar.PRFAvgMin = (4*200)/(physconst("lightspeed")/radar.freq);
             end
             
             radar.type = dewdsType;

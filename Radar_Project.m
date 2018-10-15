@@ -65,7 +65,12 @@ if dewds1.EleniGraphs == 1
         %beamwidth for Radar Freq
         dewds1.beamWidthSearch(i) = beamWidth(dewds1.freq(i), dewds1.antennaSizeX);
         dewds2.beamWidthSearch(i) = beamWidth(dewds2.freq(i), dewds2.antennaSizeX);
-        dewds2.beamWidthTrack(i) = beamWidth(dewds2.freq(i), dewds2.antennaSizeX);    
+        dewds2.beamWidthTrack(i) = beamWidth(dewds2.freq(i), dewds2.antennaSizeX);
+        PRIAvg = 1./dewds1.PRFAvgMin;
+
+        %         %Calculate Rua
+%         B = 
+%         unRange = c/(2*B);
     end   
 else
     dewds1BW_preCalc = beamWidth(1*GHz, dewds1.antennaSizeX);
@@ -77,6 +82,8 @@ else
     dewds2.beamWidthTrack = beamWidth(dewds2.freq, dewds2.antennaSizeX);
 end
 
+
+        
 %% check requirements 
 plot(dewds1.beamWidthSearch,dewds1.freq)
 title('fc vs Beamwidth')
@@ -85,14 +92,28 @@ ylabel('fc')
 
 figure
 subplot(1,2,1)
-plot(dewds1.dopavg,dewds1.freq)
+plot(dewds1.dopAvg,dewds1.freq)
 title('fc vs Doppler(avg)')
 xlabel('Doppler')
 ylabel('fc')
 
 subplot(1,2,2)
-plot(dewds1.dopmax,dewds1.freq)
+plot(dewds1.dopMax,dewds1.freq)
 title('fc vs Doppler(max)')
 xlabel('Doppler')
 ylabel('fc')
+
+figure
+subplot(1,2,1)
+plot(dewds1.PRFAvgMin,dewds1.freq)
+title('fc vs PRF(avg)')
+xlabel('PRF')
+ylabel('fc')
+
+subplot(1,2,2)
+plot(dewds1.PRFMaxMin,dewds1.freq)
+title('fc vs PRF(max)')
+xlabel('PRF')
+ylabel('fc')
+
 
