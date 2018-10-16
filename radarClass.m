@@ -74,7 +74,7 @@ classdef radarClass
                 radar.dopMax = (2*500)./(physconst("lightspeed")./radar.freq);
                 radar.PRFAvgMin = (4*200)./(physconst("lightspeed")./radar.freq);     %500 is max, 200 is average           
                 radar.PRFMaxMin = (4*500)./(physconst("lightspeed")./radar.freq); 
-                radar.rangeRes = [10 20 30 40]; %most are 10m to 30m
+                radar.rangeRes = [1 10 20 30 40]; %most are 10m to 30m
             else
             	radar.freq = 1*10^9;
                 radar.dopMax = (2*500)/(physconst("lightspeed")/radar.freq);
