@@ -1,3 +1,4 @@
+
 classdef radarClass
     %Class to store radar parameters, constants, and requirements
     
@@ -30,6 +31,8 @@ classdef radarClass
         solidAngleSearch
         beamWidthTrack
         beamWidthSearch
+        nBeamsS
+        nBeamsT
         
         
         
@@ -43,6 +46,7 @@ classdef radarClass
     end
     
     methods
+        
         function radar = radarClass(dewdsType)
             
             radar.rangeSearch = [30*10^3 300*10^3];
@@ -52,7 +56,7 @@ classdef radarClass
             radar.antennaSizeY = 5; 
             radar.azCoverage = 2*pi; 
             
-            %enter in required values
+            % enter in required values
             radar.R_rangeResTrack = 10;
             radar.R_rangeResSearch = 30; 
             radar.R_warningTime = 5*60; 
@@ -72,7 +76,7 @@ classdef radarClass
                 
             end 
         end
-
+     
 
     end
 end

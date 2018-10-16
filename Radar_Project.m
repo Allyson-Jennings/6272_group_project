@@ -1,5 +1,3 @@
-%this is creating a document to initiate git repo
-
 import radarClass
 % Authors: 
 % Rachel Roley
@@ -9,10 +7,10 @@ import radarClass
 
 %% constants 
 c = physconst("lightspeed"); 
-k = 10^3;
-u = 10^-6;
+km = 10^3;
+us = 10^-6;
 
-%functions
+%% functions
 rangeRes = @(Tp) (c/2)*Tp;
 elAngle = @(range, alt) atan(alt /range);
 PRI_calc = @(range) 2*range/c;
@@ -21,12 +19,12 @@ beamWidth = @(freq, D) (c/freq)/D;
 beamCoverage = @(solidAngle, theta3, phi3) solidAngle/(theta3*phi3);
 
 
-%dragon defintions 
+%% dragon defintions 
 dragon.lengthRange = [10 30];
 dragon.RCSRange = [1 20];
 dragon.speedRange = [0  500]; 
 dragon.averageSpeed = 200;
-dragon.maxAltitude = 15*k;
+dragon.maxAltitude = 15*km;
 
 bewilderbeast.RCS = 1000;
 bewilderbeast.maxSpeed = 100;
@@ -55,10 +53,12 @@ dewds1.solidAngleSearch = solidAngle(dewds1.elCoverageS);
 dewds2.solidAngleSearch = solidAngle(dewds2.elCoverageS);
 dewds2.solidAngleTrack = solidAngle(dewds2.elCoverageT);
 
+%beamWidth
 %beamWidth @ 1 GHz
 GHz = 1*10^9;
 dewds1BW_preCalc = beamWidth(1*GHz, dewds1.antennaSizeX);
 dewds2BW_preCalc = beamWidth(1*GHz, dewds2.antennaSizeX);
+
 
 %beamwidth for Radar Freq
 dewds1.beamWidthSearch = beamWidth(dewds1.freq, dewds1.antennaSizeX);
@@ -66,5 +66,8 @@ dewds1.beamWidthSearch = beamWidth(dewds1.freq, dewds1.antennaSizeX);
 dewds2.beamWidthSearch = beamWidth(dewds2.freq, dewds2.antennaSizeX);
 dewds2.beamWidthTrack = beamWidth(dewds2.freq, dewds2.antennaSizeX);
 
+dewds1.nBeamsS = beamCoverage(dewds1.solidAngleSearch, dewds1.beamWidthSearch, dewds1.beamWidthSearch);
+dewds2.nBeamsS = beamCoverage(dewds2.solidAngleSearch, dewds2.beamWidthSearch, dewds2.beamWidthSearch);
+dewds2.nBeamsT = beamCoverage(dewds2.solidAngleTrack, dewds2.beamWidthTrack, dewds2.beamWidthTrack);
 
-%% check requirements 
+
