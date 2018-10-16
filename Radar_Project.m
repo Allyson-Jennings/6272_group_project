@@ -67,10 +67,11 @@ if dewds1.EleniGraphs == 1
         dewds2.beamWidthSearch(i) = beamWidth(dewds2.freq(i), dewds2.antennaSizeX);
         dewds2.beamWidthTrack(i) = beamWidth(dewds2.freq(i), dewds2.antennaSizeX);
         PRIAvg = 1./dewds1.PRFAvgMin;
-
-        %         %Calculate Rua
-%         B = 
-%         unRange = c/(2*B);
+        
+        
+        Tp = (2.*dewds1.rangeRes)./c
+        B = 1./Tp;
+        unRange = c./(2.*B);
     end   
 else
     dewds1BW_preCalc = beamWidth(1*GHz, dewds1.antennaSizeX);
@@ -115,5 +116,11 @@ plot(dewds1.PRFMaxMin,dewds1.freq)
 title('fc vs PRF(max)')
 xlabel('PRF')
 ylabel('fc')
+
+figure
+plot(B,dewds1.rangeRes)
+title('Range Resolution vs B')
+xlabel('B')
+ylabel('Res')
 
 

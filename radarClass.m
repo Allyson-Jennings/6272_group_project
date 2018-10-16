@@ -16,6 +16,7 @@ classdef radarClass
         antennaSizeY
         numAntenna
         antennaSpin % in rpm
+        rangeRes
         
         %% waveform Parameters 
         TpTrack
@@ -72,7 +73,8 @@ classdef radarClass
                 radar.dopAvg = (2*200)./(physconst("lightspeed")./radar.freq);     %500 is max, 200 is average           
                 radar.dopMax = (2*500)./(physconst("lightspeed")./radar.freq);
                 radar.PRFAvgMin = (4*200)./(physconst("lightspeed")./radar.freq);     %500 is max, 200 is average           
-                radar.PRFMaxMin = (4*500)./(physconst("lightspeed")./radar.freq);           
+                radar.PRFMaxMin = (4*500)./(physconst("lightspeed")./radar.freq); 
+                radar.rangeRes = [10 20 30 40]; %most are 10m to 30m
             else
             	radar.freq = 1*10^9;
                 radar.dopMax = (2*500)/(physconst("lightspeed")/radar.freq);
