@@ -3,8 +3,7 @@ classdef radarClass
     %Class to store radar parameters, constants, and requirements
    
     
-    properties
-        EleniGraphs = 1;      
+    properties    
   
         type %dewds 1 or dewds 2
         
@@ -52,13 +51,15 @@ classdef radarClass
         R_rangeResTrack %in meters
         R_rangeResSearch
         
-        
+        c = physconst("lightspeed");
+        k = physconst("Boltzman");
+        To = 290;
 
     end
     
     methods
         
-        function radar = radarClass(dewdsType)
+        function radar = radarClass(dewdsType, varFreqFlag)
             
             radar.rangeSearch = [30*10^3 300*10^3];
             radar.PPeak = 1*10^6; 
@@ -72,7 +73,7 @@ classdef radarClass
             radar.R_rangeResSearch = 30; 
             radar.R_warningTime = 5*60; 
             
-            if radar.EleniGraphs==1
+            if varFreqFlag==1
             	radar.freq = [1*10^9 3*10^9 5*10^9 10*10^9 15*10^9 35*10^9 70*10^9 90*10^9];
                 radar.dopAvg = (2*200)./(physconst("lightspeed")./radar.freq);     %500 is max, 200 is average           
                 radar.dopMax = (2*500)./(physconst("lightspeed")./radar.freq);
@@ -99,7 +100,72 @@ classdef radarClass
                 
             end 
         end
+        
+        function res = rangeResFunc(radar, Tp)
+            res = (radar.c/2)*Tp;
+        end 
+        
+        function angle = elAngle(radar, range, alt)
+            angle = atan(alt ./range);
+        end 
+        
+        function PRI = PRI_calc(radar, range) 
+            PRI = 2*range/radar.c;
+        end 
+        
+        function SA = solidAngle(radar, el) 
+            SA = 2*pi*sin(el);
+        end 
+        
+        function BW = beamWidth(radar, freq, D)
+            BW = (radar.c./freq)./D;
+        end 
+        
+        function BC = beamCoverage(radar, solidAngle, theta3, phi3) 
+            BC = solidAngle./(theta3.*phi3);
+        end 
+        
+        function BW = bandWidth(radar, Tp)
+            BW = 1./Tp; 
+        end 
+        
+        function priMax = PRI_max(radar, f, vmax)
+            priMax = (radar.c ./f)./(4*vmax);
+        end 
+        
+        function prf = PRF(radar, PRI)
+            prf = 1./PRI;
+        end 
+        
+        function pavg = Pavg(radar, Pt, nPulses, Td, B)
+         pavg = Pt*nPulses./(Td*B);
+        end 
+        
+        function ae = Ae(radar, D)
+            ae = D^2; 
+        end
+        
+        function snr = SNR(radar, RCS, range, PAvg, Ls, F, G, PRI, Ae) 
+            snr = (  PAvg.*G.*Ae/(Ls.*F)) .* ...
+            (PRI.*RCS)/((4*pi)^2*range^4*radar.k*radar.To);
+        end 
+        
+        function td = Td(radar, updateRate, NTargets)
+            td = (updateRate*Nt);
+        end 
+
      
+        function radar = varFreq(radar, freq, vMax, vAvg)
+            radar.freq = freq;
+            radar.PRFMaxMin = radar.PRF(radar.PRI_max(radar.freq, vMax));
+            radar.PRFAvgMin = radar.PRF(radar.PRI_max(radar.freq, vAvg));
+            radar.beamWidthSearch = radar.beamWidth(freq, radar.antennaSizeX);
+            if radar.type == "dewds2" 
+                radar.beamWidthTrack= radar.beamWidthSearch;
+            end 
+            
+
+        end 
 
     end
 end

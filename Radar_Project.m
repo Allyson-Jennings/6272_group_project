@@ -9,14 +9,13 @@ import radarClass
 c = physconst("lightspeed"); 
 km = 10^3;
 us = 10^-6;
+k = physconst("Boltzman");
+To = 290;
+F = 1.25; 
+G = 10; 
 
-%% functions
-rangeRes = @(Tp) (c/2)*Tp;
-elAngle = @(range, alt) atan(alt /range);
-PRI_calc = @(range) 2*range/c;
-solidAngle = @(el) 2*pi*(1 - (sin(pi/2 - el))^2);
-beamWidth = @(freq, D) (c./freq)./D;
-beamCoverage = @(solidAngle, theta3, phi3) solidAngle./(theta3.*phi3);
+%graphing Flags
+varFreqFlag = 0; 
 
 
 %% dragon defintions 
@@ -31,48 +30,48 @@ bewilderbeast.maxSpeed = 100;
 
 
 %% set paramters, create radar objects
-dewds1 = radarClass("dewds1");
-dewds2 = radarClass("dewds2");
+dewds1 = radarClass("dewds1", varFreqFlag);
+dewds2 = radarClass("dewds2", varFreqFlag);
 
 %% calculation requirements
 
 % required el angle
-dewds1.elCoverageS = elAngle(min(dewds1.rangeSearch), dragon.maxAltitude);
+dewds1.elCoverageS = dewds1.elAngle(min(dewds1.rangeSearch), dragon.maxAltitude);
 
-dewds2.elCoverageS = elAngle(min(dewds2.rangeSearch), dragon.maxAltitude);
-dewds2.elCoverageT = elAngle(min(dewds2.rangeTrack), dragon.maxAltitude);
+dewds2.elCoverageS = dewds2.elAngle(min(dewds2.rangeSearch), dragon.maxAltitude);
+dewds2.elCoverageT = dewds2.elAngle(min(dewds2.rangeTrack), dragon.maxAltitude);
 
 %min PRI 
-dewds1.PRISearch = PRI_calc(max(dewds1.rangeSearch));
+dewds1.PRISearch = dewds1.PRI_calc(max(dewds1.rangeSearch));
 
-dewds2.PRISearch = PRI_calc(max(dewds2.rangeSearch));
-dewds2.PRITrack = PRI_calc(max(dewds2.rangeTrack));
+dewds2.PRISearch = dewds2.PRI_calc(max(dewds2.rangeSearch));
+dewds2.PRITrack = dewds2.PRI_calc(max(dewds2.rangeTrack));
 
 %total solid Angle coverage
-dewds1.solidAngleSearch = solidAngle(dewds1.elCoverageS);
-dewds2.solidAngleSearch = solidAngle(dewds2.elCoverageS);
-dewds2.solidAngleTrack = solidAngle(dewds2.elCoverageT);
+dewds1.solidAngleSearch = dewds1.solidAngle(dewds1.elCoverageS);
+dewds2.solidAngleSearch = dewds2.solidAngle(dewds2.elCoverageS);
+dewds2.solidAngleTrack = dewds2.solidAngle(dewds2.elCoverageT);
 
 %beamWidth
 %beamWidth @ 1 GHz
 GHz = 1*10^9;
 
-dewds1BW_preCalc = beamWidth(1*GHz, dewds1.antennaSizeX);
-dewds2BW_preCalc = beamWidth(1*GHz, dewds2.antennaSizeX);
+dewds1BW_preCalc = dewds1.beamWidth(1*GHz, dewds1.antennaSizeX);
+dewds2BW_preCalc = dewds2.beamWidth(1*GHz, dewds2.antennaSizeX);
 
 
 %beamwidth for Radar Freq
-dewds1.beamWidthSearch = beamWidth(dewds1.freq, dewds1.antennaSizeX);
-dewds2.beamWidthSearch = beamWidth(dewds2.freq, dewds2.antennaSizeX);
-dewds2.beamWidthTrack = beamWidth(dewds2.freq, dewds2.antennaSizeX);
+dewds1.beamWidthSearch = dewds1.beamWidth(dewds1.freq, dewds1.antennaSizeX);
+dewds2.beamWidthSearch = dewds2.beamWidth(dewds2.freq, dewds2.antennaSizeX);
+dewds2.beamWidthTrack = dewds2.beamWidth(dewds2.freq, dewds2.antennaSizeX);
 
 
-dewds1.nBeamsS = beamCoverage(dewds1.solidAngleSearch, dewds1.beamWidthSearch, dewds1.beamWidthSearch);
-dewds2.nBeamsS = beamCoverage(dewds2.solidAngleSearch, dewds2.beamWidthSearch, dewds2.beamWidthSearch);
-dewds2.nBeamsT = beamCoverage(dewds2.solidAngleTrack, dewds2.beamWidthTrack, dewds2.beamWidthTrack);
+dewds1.nBeamsS = dewds1.beamCoverage(dewds1.solidAngleSearch, dewds1.beamWidthSearch, dewds1.beamWidthSearch);
+dewds2.nBeamsS = dewds2.beamCoverage(dewds2.solidAngleSearch, dewds2.beamWidthSearch, dewds2.beamWidthSearch);
+dewds2.nBeamsT = dewds2.beamCoverage(dewds2.solidAngleTrack, dewds2.beamWidthTrack, dewds2.beamWidthTrack);
 
-
-if dewds1.EleniGraphs == 1
+%% vary frequency, 
+if varFreqFlag == 1
     for i = 1:8
         dewds1BW_preCalc(i) = beamWidth(dewds1.freq(i), dewds1.antennaSizeX);
         dewds2BW_preCalc(i) = beamWidth(dewds2.freq(i), dewds2.antennaSizeX); 
@@ -100,6 +99,8 @@ end
 
         
 %% check requirements 
+
+if varFreqFlag == 1 
 plot(dewds1.beamWidthSearch,dewds1.freq)
 title('fc vs Beamwidth')
 xlabel('Beamwidth')
@@ -136,5 +137,24 @@ plot(B,dewds1.rangeRes)
 title('Range Resolution vs B')
 xlabel('B')
 ylabel('Res')
+end
 
+%% 
+f = 1*10^9 *[0.5 1 2 3 4 5];
+dewds1 = dewds1.varFreq(f, max(dragon.speedRange), dragon.averageSpeed); 
+plot(dewds1.freq,1./dewds1.PRFMaxMin)
+hold on 
+plot(dewds1.freq,1./dewds1.PRFAvgMin)
 
+PRImin = dewds1.PRISearch;
+
+plot(dewds1.freq,PRImin*ones(1,length(f)))
+hold off
+
+Ls = 2;
+B = 1/dewds1.R_rangeResSearch;
+nPulses = 100;
+Td = dewds1.beamWidthSearch/(dewds1.antennaSpin);
+PAvg = dewds1.Pavg(dewds1.PPeak, nPulses, Td, B);
+Ae = dewds1.Ae(dewds1.antennaSizeX); 
+SNR = dewds1.SNR(min(dragon.RCSRange), max(dewds1.rangeSearch), PAvg, Ls, F, G, 1./dewds1.PRFMaxMin, Ae);
