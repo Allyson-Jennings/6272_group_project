@@ -118,7 +118,7 @@ classdef radarClass
         end 
         
         function BW = beamWidth(radar, freq, D)
-            BW = (radar.c./freq)./D;
+            BW = 0.89*(radar.c./freq)./D;
         end 
         
         function BC = beamCoverage(radar, solidAngle, theta3, phi3) 
@@ -146,13 +146,24 @@ classdef radarClass
             ae = D^2; 
         end
         
-        function snr = SNR(radar, RCS, range, PAvg, Ls, F, G, PRI, Ae) 
-            snr = (  PAvg.*G.*Ae/(Ls.*F)) .* ...
-            (PRI.*RCS)/((4*pi)^2*range^4*radar.k*radar.To);
+        function lhs = SNR_Track_LHS(radar, Pavg, G, Ae, Ls, F)
+            lhs = Pavg*G*Ae / Ls*F; 
+        end 
+        
+        function rhs = SNR_Track_RHS(radar, SNR, range, PRF, RCS)
+            rhs = SNR*(4*pi)^2 * range^4 * radar.k * radar.To * PRF / RCS; 
+        end 
+        
+        function lhs = SNR_Search_LHS(radar, PAvg, Ae, F, Ls)
+            lhs = PAvg.*Ae/(Ls * radar.To * F);
+        end 
+        
+        function rhs = SNR_Search_RHS(radar, range, SNRmin, rcs, solidAngle, Tfs)
+            rhs = SNRmin*4*pi*(range^4/RCS).*(solidAngle./Tfs);
         end 
         
         function td = Td(radar, updateRate, NTargets)
-            td = (updateRate*Nt);
+            td = (updateRate*NTargets);
         end 
 
      
