@@ -68,7 +68,6 @@ if dewds1.EleniGraphs == 1
         dewds2.beamWidthTrack(i) = beamWidth(dewds2.freq(i), dewds2.antennaSizeX);
         PRIAvg = 1./dewds1.PRFAvgMin;
         
-        
         Tp = (2.*dewds1.rangeRes)./c
         B = 1./Tp;
         unRange = c./(2.*B);
