@@ -137,8 +137,9 @@ classdef radarClass
             prf = 1./PRI;
         end 
         
-        function pavg = Pavg(radar, Pt, nPulses, Td, B)
-         pavg = Pt*nPulses./(Td*B);
+        function pavg = Pavg(radar, Pt, PRI, B)
+         %pavg = Pt*nPulses./(Td*B);
+         pavg = Pt*(1./B)*(1./PRI); 
         end 
         
         function ae = Ae(radar, D)

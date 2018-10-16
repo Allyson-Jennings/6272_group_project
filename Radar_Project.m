@@ -15,7 +15,7 @@ F = 1.25;
 G = 10; 
 
 %graphing Flags
-varFreqFlag = 0; 
+varFreqFlag = 1; 
 
 
 %% dragon defintions 
@@ -155,6 +155,6 @@ Ls = 2;
 B = 1/dewds1.R_rangeResSearch;
 nPulses = 100;
 Td = dewds1.beamWidthSearch/(dewds1.antennaSpin);
-PAvg = dewds1.Pavg(dewds1.PPeak, nPulses, Td, B);
+PAvg = dewds1.Pavg(dewds1.PPeak, 1./dewds1.PRFMaxMin, B);
 Ae = dewds1.Ae(dewds1.antennaSizeX); 
 SNR = dewds1.SNR(min(dragon.RCSRange), max(dewds1.rangeSearch), PAvg, Ls, F, G, 1./dewds1.PRFMaxMin, Ae);
