@@ -73,13 +73,13 @@ dewds2.nBeamsT = dewds2.beamCoverage(dewds2.solidAngleTrack, dewds2.beamWidthTra
 %% vary frequency, 
 if varFreqFlag == 1
     for i = 1:8
-        dewds1BW_preCalc(i) = beamWidth(dewds1.freq(i), dewds1.antennaSizeX);
-        dewds2BW_preCalc(i) = beamWidth(dewds2.freq(i), dewds2.antennaSizeX); 
+        dewds1BW_preCalc(i) = dewds1.beamWidth(dewds1.freq(i), dewds1.antennaSizeX);
+        dewds2BW_preCalc(i) = dewds2.beamWidth(dewds2.freq(i), dewds2.antennaSizeX); 
 
         %beamwidth for Radar Freq
-        dewds1.beamWidthSearch(i) = beamWidth(dewds1.freq(i), dewds1.antennaSizeX);
-        dewds2.beamWidthSearch(i) = beamWidth(dewds2.freq(i), dewds2.antennaSizeX);
-        dewds2.beamWidthTrack(i) = beamWidth(dewds2.freq(i), dewds2.antennaSizeX);
+        dewds1.beamWidthSearch(i) = dewds1.beamWidth(dewds1.freq(i), dewds1.antennaSizeX);
+        dewds2.beamWidthSearch(i) = dewds2.beamWidth(dewds2.freq(i), dewds2.antennaSizeX);
+        dewds2.beamWidthTrack(i) = dewds2.beamWidth(dewds2.freq(i), dewds2.antennaSizeX);
         PRIAvg = 1./dewds1.PRFAvgMin;
         
         Tp = (2.*dewds1.rangeRes)./c
