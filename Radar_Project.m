@@ -121,12 +121,12 @@ grid on
 
 
 figure
-plot(dewds1.PRFAvgMin,dewds1.freq./GHz)
+plot(dewds1.freq./GHz,dewds1.PRFAvgMin./1e3)
 hold on
-plot(dewds1.PRFMaxMin,dewds1.freq./GHz)
+plot(dewds1.freq./GHz,dewds1.PRFMaxMin./1e3)
 title('fc vs PRF')
-xlabel('PRF')
-ylabel('fc (GHz)')
+ylabel('PRF (kHz)')
+xlabel('fc (GHz)')
 grid on
 legend('PRF_{min}','PRF_{max}')
 
