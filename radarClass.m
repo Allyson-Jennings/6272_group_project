@@ -148,6 +148,9 @@ classdef radarClass
          Pavg = Pt*(1./B)*(1./PRI); 
         end 
         
+        function Pave_sweep = sweep_Pave(radar, Pt, dutyCyc)
+            Pave_sweep = Pt.*dutyCyc;
+        end
         function ae = Ae(radar, D) %%%not sure if this is correct?
             ae = D^2; 
         end
