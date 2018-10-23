@@ -17,7 +17,7 @@ F = 1.25;
 G = 10; 
 
 %graphing Flags
-varFreqFlag = 1; 
+varFreqFlag = 0; 
 
 
 %% dragon defintions 
@@ -89,13 +89,13 @@ if varFreqFlag == 1
         unRange = c./(2.*B);
     end   
 else
-    dewds1BW_preCalc = beamWidth(1*GHz, dewds1.antennaSizeX);
-    dewds2BW_preCalc = beamWidth(1*GHz, dewds2.antennaSizeX);
+    dewds1BW_preCalc = dewds1.beamWidth(1*GHz, dewds1.antennaSizeX);
+    dewds2BW_preCalc = dewds2.beamWidth(1*GHz, dewds2.antennaSizeX);
 
     %beamwidth for Radar Freq
-    dewds1.beamWidthSearch = beamWidth(dewds1.freq, dewds1.antennaSizeX);
-    dewds2.beamWidthSearch = beamWidth(dewds2.freq, dewds2.antennaSizeX);
-    dewds2.beamWidthTrack = beamWidth(dewds2.freq, dewds2.antennaSizeX);
+    dewds1.beamWidthSearch = dewds1.beamWidth(dewds1.freq, dewds1.antennaSizeX);
+    dewds2.beamWidthSearch = dewds2.beamWidth(dewds2.freq, dewds2.antennaSizeX);
+    dewds2.beamWidthTrack = dewds2.beamWidth(dewds2.freq, dewds2.antennaSizeX);
 end
 
 
