@@ -54,6 +54,8 @@ classdef radarClass
         R_warningTime % in seconds 
         R_rangeResTrack %in meters
         R_rangeResSearch
+        SNRmin_search
+        SNRmin_track
         
         c = physconst("lightspeed");
         k = physconst("Boltzman");
@@ -67,6 +69,7 @@ classdef radarClass
             
             radar.rangeSearch = [30*10^3 300*10^3];
             radar.PPeak = 1*10^6; 
+            radar.duty_cycle = .2; %needs to be fixed
             radar.Pt = radar.PPeak*radar.duty_cycle;
             
             radar.antennaSizeX = 5;
@@ -76,7 +79,8 @@ classdef radarClass
             % enter in required values
             radar.R_rangeResTrack = 10;
             radar.R_rangeResSearch = 30; 
-            radar.R_warningTime = 5*60; 
+            radar.R_warningTime = 5*60;
+            radar.SNRmin_search = 10^(26/10);
             
             if varFreqFlag==1
             	radar.freq = [1*10^9 3*10^9 5*10^9 10*10^9 15*10^9 35*10^9 70*10^9 90*10^9];
@@ -88,6 +92,7 @@ classdef radarClass
                 radar.rangeRes = [1 10 20 30 40]; %most are 10m to 30m
             else
             	radar.freq = 1*10^9;
+                radar.lambda = radar.freq/physconst("lightspeed");
                 radar.dopMax = (2*500)/(physconst("lightspeed")/radar.freq);
                 radar.dopAvg = (2*200)/(physconst("lightspeed")/radar.freq);
                 radar.PRFMaxMin = (4*500)/(physconst("lightspeed")/radar.freq);
@@ -143,6 +148,11 @@ classdef radarClass
             prf = 1./PRI;
         end 
         
+        function radar = GainCalc(radar)             
+            radar.Gain = 32400./(radar.beamWidthSearch.*...
+                radar.beamWidthSearch*180/pi); %note this must be BW in degrees
+        end
+        
         function Pavg = Pavg(radar, Pt, PRI, B) %%%Pt is never set?
          %pavg = Pt*nPulses./(Td*B);
          Pavg = Pt*(1./B)*(1./PRI); 
@@ -160,8 +170,6 @@ classdef radarClass
         end 
         
         function rhs = SNR_Track_RHS(radar, SNR, range, PRF, RCS)
-            num_pulse = SingBeamSNR(radar, RCS, SNRmin, loss);
-            Tfs = time_range(num_pulse,radar, maxspeedRange); 
             rhs = SNR*(4*pi)^2 * range^4 * radar.k * radar.To * PRF / RCS ...
                 *1/Tfs; 
         end 
@@ -170,8 +178,13 @@ classdef radarClass
             lhs = PAvg.*Ae/(Ls * radar.To * F);
         end 
         
-        function rhs = SNR_Search_RHS(radar, range, SNRmin, RCS, solidAngle, Tfs)
-            rhs = SNRmin*4*pi*(range^4/RCS).*(solidAngle./Tfs);
+        function rhs = SNR_Search_RHS(radar, dragon)
+            RCS = dragon.RCSRange(1);
+            rangeS = radar.rangeSearch(2);
+            SNRmin = radar.SNRmin_search;
+            num_pulse = SingBeamSNR(radar, RCS, SNRmin);
+            Tfs = time_range(num_pulse, radar, dragon); 
+            rhs = SNRmin*4*pi*(rangeS^4/RCS).*(SA./Tfs);
         end 
         
         function td = Td(radar, updateRate, NTargets)
@@ -184,8 +197,6 @@ classdef radarClass
             radar.PRFMaxMin = radar.PRF(radar.PRI_max(radar.freq, vMax));
             radar.PRFAvgMin = radar.PRF(radar.PRI_max(radar.freq, vAvg));
             radar.beamWidthSearch = radar.beamWidth(freq, radar.antennaSizeX);
-            radar.Gain = 32400./(radar.beamWidthSearch([1 3 5]).*...
-                radar.beamWidthSearch([2 4 6])*180/pi); %note this must be BW in degrees
 
             if radar.type == "dewds2" 
                 radar.beamWidthTrack= radar.beamWidthSearch;
@@ -193,8 +204,9 @@ classdef radarClass
             
 
         end 
-        function num_pulse = SingBeamSNR(radar, RCS, SNRmin, loss)
-            num_pulse = (SNRmin*(4*pi)^3*radar.rangeSearch*radar.k*loss)/...
+        function num_pulse = SingBeamSNR(radar, RCS, SNRmin)
+            radar = GainCalc(radar);
+            num_pulse = (SNRmin*(4*pi)^3*radar.rangeSearch*radar.k)/...
                 (radar.Pt*radar.Gain^2*radar.lambda*RCS);
         end
         function Tfs = time_range(num_pulse,radar, maxspeedRange) 
