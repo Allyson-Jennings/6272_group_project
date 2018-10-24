@@ -17,7 +17,7 @@ F = 1.25;
 G = 10; 
 
 %graphing Flags
-varFreqFlag = 0; 
+varFreqFlag = 1;
 
 
 %% dragon defintions 
@@ -45,6 +45,7 @@ dewds2.elCoverageT = dewds2.elAngle(min(dewds2.rangeTrack), dragon.maxAltitude);
 
 %min PRI 
 dewds1.PRISearch = dewds1.PRI_calc(max(dewds1.rangeSearch));
+dewds1.PRIPerDwell = dewds1.beamWidthSearch/dewds1.PRISearch;
 
 dewds2.PRISearch = dewds2.PRI_calc(max(dewds2.rangeSearch));
 dewds2.PRITrack = dewds2.PRI_calc(max(dewds2.rangeTrack));

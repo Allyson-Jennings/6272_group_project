@@ -25,6 +25,7 @@ classdef radarClass
         PRITrack
         freq
         lambda
+        PRIPerDwell
         %% waveform Parameters for graphs
         PRFAvgMin
         PRFMaxMin
@@ -47,8 +48,6 @@ classdef radarClass
         beamWidthSearch
         nBeamsS
         nBeamsT
-        
-        
         
         %requirments 
         R_warningTime % in seconds 
@@ -140,6 +139,10 @@ classdef radarClass
             BW = 1./Tp; 
         end 
         
+        function BWCalc = BWCalculation(radar, c)
+            BWCalc = c/rangeRes;
+        end
+                
         function priMax = PRI_max(radar, f, vmax)
             priMax = (radar.c ./f)./(4*vmax);
         end 
@@ -177,6 +180,7 @@ classdef radarClass
         function lhs = SNR_Search_LHS(radar, PAvg, Ae, F, Ls)
             lhs = PAvg.*Ae/(Ls * radar.To * F);
         end 
+        
         
         function rhs = SNR_Search_RHS(radar, dragon)
             RCS = dragon.RCSRange(1);
@@ -222,5 +226,5 @@ classdef radarClass
         end
 
     end
-end
+end        
 
