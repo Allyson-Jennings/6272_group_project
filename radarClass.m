@@ -83,19 +83,19 @@ classdef radarClass
             
             if varFreqFlag==1
             	radar.freq = [1*10^9 3*10^9 5*10^9 10*10^9 15*10^9 35*10^9 70*10^9 90*10^9];
-                radar.lambda = radar.freq/physconst("lightspeed");
-                radar.dopAvg = (2*200)./(physconst("lightspeed")./radar.freq);     %500 is max, 200 is average           
-                radar.dopMax = (2*500)./(physconst("lightspeed")./radar.freq);
-                radar.PRFAvgMin = (4*200)./(physconst("lightspeed")./radar.freq);     %500 is max, 200 is average           
-                radar.PRFMaxMin = (4*500)./(physconst("lightspeed")./radar.freq); 
+                radar.lambda = radar.c/radar.freq;
+                radar.dopAvg = (2*200)./radar.lambda;     %500 is max, 200 is average           
+                radar.dopMax = (2*500)./radar.lambda;
+                radar.PRFAvgMin = (4*200)./radar.lambda;     %500 is max, 200 is average           
+                radar.PRFMaxMin = (4*500)./radar.lambda; 
                 radar.rangeRes = [1 10 20 30 40]; %most are 10m to 30m
             else
             	radar.freq = 1*10^9;
-                radar.lambda = radar.freq/physconst("lightspeed");
-                radar.dopMax = (2*500)/(physconst("lightspeed")/radar.freq);
-                radar.dopAvg = (2*200)/(physconst("lightspeed")/radar.freq);
-                radar.PRFMaxMin = (4*500)/(physconst("lightspeed")/radar.freq);
-                radar.PRFAvgMin = (4*200)/(physconst("lightspeed")/radar.freq);
+                radar.lambda = radar.c/radar.freq;
+                radar.dopMax = (2*500)/radar.lambda;
+                radar.dopAvg = (2*200)/radar.lambda;
+                radar.PRFMaxMin = (4*500)/radar.lambda;
+                radar.PRFAvgMin = (4*200)/radar.lambda;
             end
             
             radar.type = dewdsType;
@@ -111,9 +111,13 @@ classdef radarClass
             end 
         end
         
+        
+        
         function res = rangeResFunc(radar, Tp)
             res = (radar.c/2)*Tp;
         end 
+        
+        
         
         function angle = elAngle(radar, range, alt)
             angle = atan(alt ./range);
@@ -165,7 +169,7 @@ classdef radarClass
             Pave_sweep = Pt.*dutyCyc;
         end
         function ae = Ae(radar, D) %%%not sure if this is correct?
-            ae = D^2; 
+            ae = D^2; %piazza post Ae = efficiency * A, efficiency = 1 for our system; 
         end
         
         function lhs = SNR_Track_LHS(radar, Pavg, G, Ae, Ls, F)
@@ -211,10 +215,16 @@ classdef radarClass
         end 
         function num_pulse = SingBeamSNR(radar, RCS, SNRmin)
             radar = GainCalc(radar);
+            SNRmin
+            max(radar.rangeSearch)
+            radar.Pt
+            radar.Gain
+            radar.lambda
+            RCS
             
             %changed to max(radar.rangeSearch), to make division work
             num_pulse = (SNRmin*(4*pi)^3*max(radar.rangeSearch)*radar.k)./...
-                (radar.Pt * (radar.Gain).^2 .* (radar.lambda) * RCS);
+                (radar.Pt * (radar.Gain).^2 .* (radar.lambda) * RCS)
         end
         
         function Tfs = time_range(num_pulse,radar, maxspeedRange) 

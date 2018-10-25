@@ -18,7 +18,7 @@ F = 1.25;
 G = 10; 
 
 %graphing Flags
-varFreqFlag = 1;
+varFreqFlag = 0;
 
 
 %% dragon defintions 
