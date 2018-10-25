@@ -187,8 +187,9 @@ classdef radarClass
             rangeS = radar.rangeSearch(2);
             SNRmin = radar.SNRmin_search;
             num_pulse = SingBeamSNR(radar, RCS, SNRmin);
-            Tfs = time_range(num_pulse, radar, dragon); 
-            rhs = SNRmin*4*pi*(rangeS^4/RCS).*(SA./Tfs);
+            Tfs = time_range(num_pulse, radar, max(dragon.speedRange)); 
+            % choose max dragon speed
+            rhs = SNRmin*4*pi*(rangeS^4/RCS).*(radar.solidAngleSearch./Tfs);
         end 
         
         function td = Td(radar, updateRate, NTargets)
@@ -210,17 +211,23 @@ classdef radarClass
         end 
         function num_pulse = SingBeamSNR(radar, RCS, SNRmin)
             radar = GainCalc(radar);
-            num_pulse = (SNRmin*(4*pi)^3*radar.rangeSearch*radar.k)/...
-                (radar.Pt*radar.Gain^2*radar.lambda*RCS);
+            
+            %changed to max(radar.rangeSearch), to make division work
+            num_pulse = (SNRmin*(4*pi)^3*max(radar.rangeSearch)*radar.k)./...
+                (radar.Pt * (radar.Gain).^2 .* (radar.lambda) * RCS);
         end
+        
         function Tfs = time_range(num_pulse,radar, maxspeedRange) 
-            M = radar.solidAngleSearch/radar.beamWidthSearch; %number of beams in solid angle
-            Tslow = num_pulse*PRI*radar*M;
-            Tspeed = 3*radar.beamWidthSearch*maxspeedRange;
+            M = radar.solidAngleSearch./radar.beamWidthSearch; %number of beams in solid angle
+            Tslow = num_pulse.*(radar.PRISearch).*M;
+            %Tslow = num_pulse*(radar.PRISearch)*radar*M; %what this was
+            %before
+            
+            Tspeed = (radar.beamWidthSearch)*maxspeedRange*3;
             Tdistance = (M -(radar.elCoverageS./radar.beamWidthSearch)).*...
                 radar.beamWidthSearch; 
             Tsingle = Tdistance./Tspeed;
-            Tfast = Tsingle*M;
+            Tfast = Tsingle.*M;
             Tfs = Tfast:Tslow;
             
         end

@@ -6,6 +6,7 @@ import radarClass
 % Sarah Preston 
 
 close all
+clear all
 
 %% constants 
 c = physconst("lightspeed"); 
@@ -99,6 +100,7 @@ else
     dewds2.beamWidthTrack = dewds2.beamWidth(dewds2.freq, dewds2.antennaSizeX);
 end
 %% SNR/Tfs calls
+
 temp = dewds1.SNR_Search_RHS(dragon);
 
         
