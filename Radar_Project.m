@@ -74,6 +74,7 @@ dewds1.nBeamsS = dewds1.beamCoverage(dewds1.solidAngleSearch, dewds1.beamWidthSe
 dewds2.nBeamsS = dewds2.beamCoverage(dewds2.solidAngleSearch, dewds2.beamWidthSearch, dewds2.beamWidthSearch);
 dewds2.nBeamsT = dewds2.beamCoverage(dewds2.solidAngleTrack, dewds2.beamWidthTrack, dewds2.beamWidthTrack);
 
+
 %% vary frequency, 
 if varFreqFlag == 1
     for i = 1:8
@@ -100,8 +101,9 @@ else
     dewds2.beamWidthTrack = dewds2.beamWidth(dewds2.freq, dewds2.antennaSizeX);
 end
 %% SNR/Tfs calls
-
-temp = dewds1.SNR_Search_RHS(dragon);
+dewds1.solidAngleSearch
+rhs = dewds1.SNR_Search_RHS(dragon);
+%lhs = dewds1.SNR_Search_LHS(dragon,PAvg, dewds1.Ae, 
 
         
 %% check requirements 
@@ -161,8 +163,8 @@ Ls = 2;
 B = 1/dewds1.R_rangeResSearch;
 
 Td = dewds1.beamWidthSearch/(dewds1.antennaSpin);
-PAvg = dewds1.Pavg(dewds1.PPeak, 1./dewds1.PRFMaxMin, B);
-Ae = dewds1.Ae(dewds1.antennaSizeX); 
+PAvg = dewds1.Pavg(1./dewds1.PRFMaxMin, B);
+Ae = dewds1.Ae;
 
 
 %% Sweep Duty Cycles to see a range of Pave we can get
