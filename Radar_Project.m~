@@ -79,8 +79,11 @@ numPulses = 1:2;
 dewds1 = dewds1.time_range(0, max(dragon.speedRange), 0);
 dewds2 = dewds2.time_range(numPulses, max(dragon.speedRange), 25); %% too many dragons at this speed
 dewds2 = dewds2.time_range(numPulses, max(dragon.speedRange), 18); %% can only use 1 pulse, # of dragons okay
-dewds2 = dewds2.time_range(1, dragon.averageSpeed, 47); % we can use 1 pulse and track 48 avg speed dragons.
-dewds2 = dewds2.time_range(numPulses, dragon.averageSpeed, 23); % we can use 2 pulses and track 23 avg speed dragons
+dewds2 = dewds2.time_range(numPulses, dragon.averageSpeed, 25); % we can use 1 pulse and track 25 avg speed dragons. 2 is just a little too high
+dewds2 = dewds2.time_range(numPulses, dragon.averageSpeed, 47); % we can use 1 pulse and track 48 avg speed dragons.
+
+
+
 
 
 

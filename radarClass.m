@@ -30,6 +30,11 @@ classdef radarClass
         bandWidthTrack
         bandWidthSearch
         
+        TDwellSearch
+        TDwellTrack
+        TfsSearchMin
+        TfsSearchMax
+        
         %% waveform Parameters for graphs
         PRFAvgMin
         PRFMaxMin
@@ -106,16 +111,7 @@ classdef radarClass
                 
             end 
             
-            
-            if varFreqFlag==1
-            	radar.freq = [1*10^9 3*10^9 5*10^9 10*10^9 15*10^9 35*10^9 70*10^9 90*10^9];
-                radar.lambda = radar.c ./radar.freq;
-                radar.dopAvg = (2*200)./radar.lambda;     %500 is max, 200 is average           
-                radar.dopMax = (2*500)./radar.lambda;
-                radar.PRFAvgMin = (4*200)./radar.lambda;     %500 is max, 200 is average           
-                radar.PRFMaxMin = (4*500)./radar.lambda; 
-                radar.rangeRes = [1 10 20 30 40]; %most are 10m to 30m
-            else
+           
             	radar.freq = 1*10^9;
                 radar.lambda = radar.c ./radar.freq;
                 radar.dopMax = (2*500)/radar.lambda;
@@ -123,7 +119,7 @@ classdef radarClass
                 radar.PRFMaxMin = (4*500)/radar.lambda;
                 radar.PRFAvgMin = (4*200)/radar.lambda;
                 
-            end
+           
             
            
         end
@@ -230,37 +226,58 @@ classdef radarClass
             
 
         end 
-        function num_pulse = SingBeamSNR(radar, RCS, SNRmin)
-            if radar.type == "dewds2"
-                num_pulse = 4:1:20;
-                
-            else 
-               Tdwell = radar.beamWidthSearch / 2*pi*radar.antennaSpin/60 ;
-               num_pulse = floor(Tdwell/radar.PRISearch);
+        
+        
+        function radar = time_range(radar,  num_pulse, maxspeedRange, dragons_Tracked) 
+            
+            if radar.type == "dewds1"
+                %dwell determined by spin rate and el coverage
+                TDwell_Az = radar.beamWidthSearch / 2*pi*radar.antennaSpin/60 ;
+                numBeamsPerAz = radar.elCoverageS ./radar.beamWidthSearch;
+                TDwell = TDwell_Az/numBeamsPerAz; 
+                radar.TDwellSearch = TDwell;
+            else
+                %look at dwell for different num of pulses
+                TDwell = num_pulse.*(radar.PRISearch);
+                radar.TDwellSearch = TDwell;
             end 
             
-            %changed to max(radar.rangeSearch), to make division work
-            %num_pulse = (SNRmin*(4*pi)^3*(max(radar.rangeSearch))^4*radar.k ...
-             %    *radar.To*radar.F*radar.Ls*radar.bandWidthSearch)./...
-               % (radar.Pt * (radar.Gain).^2 .* (radar.lambda).^2 * RCS);
-        end
-        
-        function Tfs = time_range(radar,  num_pulse, maxspeedRange) 
+            M = radar.solidAngleSearch; 
+           
+            radar.TfsSearchMin = TDwell.*M/(radar.beamWidthSearch)^2;
             
-            %M = (radar.solidAngleSearch)/(radar.beamWidthSearch); %number of beams in solid angle
-            M = radar.nBeamsS; 
+            Crossrange_1beam = min(radar.rangeSearch)*(radar.beamWidthSearch);      % What is the crossrange distance of one beam? (theta/360 x circumference of 300m circle)
+            threebeam_distance = Crossrange_1beam*3;  
             
-            Tdwell = num_pulse.*(radar.PRISearch)
-            Tslow = Tdwell.*M
-            %Tslow = num_pulse*(radar.PRISearch)*radar*M; %what this was
-            %before
+            % Tfs search has to been such that you can search the whole
+            % area before the dragon can move three beams
+            dragonTravelTime = threebeam_distance / maxspeedRange;
             
-            Tspeed = (radar.beamWidthSearch)*maxspeedRange*3;
-            Tdistance = (M -(radar.elCoverageS./radar.beamWidthSearch)).*...
-                radar.beamWidthSearch; 
-            Tsingle = Tdistance./Tspeed;
-            Tfast = Tsingle.*M
-            Tfs = [Tfast Tslow];
+            radar.TfsSearchMax = dragonTravelTime;
+            %Tfs = [Tfs1 Tfs2];
+            
+            if radar.type == "dewds2" 
+                TDwell = radar.PRITrack*num_pulse;
+                
+                Crossrange_1beam = min(radar.rangeTrack)*(radar.beamWidthTrack);      % What is the crossrange distance of one beam? (theta/360 x circumference of 300m circle)
+                threebeam_distance = Crossrange_1beam*3                  % Per spec, dragon not allowed to go more than three of these
+
+                %number of cells to search
+                Rosette = 25;
+
+                revisit_time= dragons_Tracked.*TDwell.*Rosette;  % The time it takes to revist a tracked dragon (25 is the rosette squares for 3 beamwidths)
+
+                disTraveled =  maxspeedRange.*revisit_time
+                
+                if (disTraveled <= threebeam_distance)
+                    radar.TDwellTrack = TDwell;
+                    %radar.num_pulse = num_pulse;
+                else 
+                    fprintf("Number of dragons is too high!")
+                end 
+                
+            end 
+            
             
         end
 
