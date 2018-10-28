@@ -1,5 +1,3 @@
-clear classes
-
 import radarClass
 % Authors: 
 % Rachel Roley
@@ -17,7 +15,7 @@ km = 10^3;
 us = 10^-6;
 k = physconst("Boltzman");
 To = 290;
-F = 2; 
+F = 1.25; 
 G = 10; 
 
 
@@ -36,8 +34,7 @@ bewilderbeast.maxSpeed = 100;
 %% set paramters, create radar objects
 dewds1 = radarClass("dewds1");
 dewds2 = radarClass("dewds2");
-dewds1.F    = F;
-dewds2.F    = F;
+
 %% calculation requirements
 
 % required el angle
@@ -93,6 +90,8 @@ dutyCycle = 0.1:0.1:0.5;        % 10% - 50% duty cycle in 10% increments
 pAve = dewds1.sweep_Pave(1e6, dutyCycle);
 
 dewds2 = dewds2.SNRTrack(dragon.RCSRange);
+sep     = dewds2.calcSNRTrack(1);
+
 testSNR = 10*log(dewds2.calcSNRTrack(1));
 figure
 plot(dutyCycle.*100, pAve./1e3)
