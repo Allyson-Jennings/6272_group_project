@@ -7,6 +7,7 @@ import radarClass
 
 close all
 clear all
+close all
 
 %% constants 
 c = physconst("lightspeed"); 
