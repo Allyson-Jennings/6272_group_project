@@ -89,6 +89,8 @@ dutyCycle = 0.1:0.1:0.5;        % 10% - 50% duty cycle in 10% increments
 pAve = dewds1.sweep_Pave(1e6, dutyCycle);
 
 dewds2 = dewds2.SNRTrack(dragon.RCSRange);
+sep     = dewds2.calcSNRTrack(1);
+
 testSNR = 10*log(dewds2.calcSNRTrack(1));
 figure
 plot(dutyCycle.*100, pAve./1e3)

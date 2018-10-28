@@ -175,7 +175,7 @@ classdef radarClass
         
         function radar = GainCalc(radar)             
             radar.Gain = 32400./(radar.beamWidthSearch.*...
-                radar.beamWidthSearch*180/pi); %note this must be BW in degrees
+                radar.beamWidthSearch*(180/pi)^2); %note this must be BW in degrees
         end
         
         function Pavg = Pavg(radar,  PRI, B) 
@@ -236,7 +236,7 @@ classdef radarClass
             disp('stop')
             radar = GainCalc(radar);
             radar.calcSNRTrack = radar.Pt.*radar.Gain.*radar.lambda.*RCS(1).*1./((4*pi)^3.* ...
-                radar.rangeSearch.*radar.k.*radar.To.*...
+                radar.rangeSearch.^4.*radar.k.*radar.To.*...
                 radar.F.*radar.bandWidthTrack.*radar.Ls);
         end
         
