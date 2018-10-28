@@ -253,7 +253,7 @@ classdef radarClass
             
             % Tfs search has to been such that you can search the whole
             % area before the dragon can move three beams
-            dragonTravelTime = threebeam_distance / maxspeedRange 
+            dragonTravelTime = threebeam_distance / maxspeedRange ;
             
             radar.TfsSearchMax = dragonTravelTime;
             %Tfs = [Tfs1 Tfs2];
