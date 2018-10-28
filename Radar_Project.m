@@ -9,6 +9,9 @@ close all
 clear all
 close all
 
+moon = imread('TooHigh.png');
+imshow(moon);
+
 %% constants 
 c = physconst("lightspeed"); 
 km = 10^3;
