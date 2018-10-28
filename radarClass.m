@@ -72,8 +72,8 @@ classdef radarClass
         
         %Losses 
         Ls = 1;
-        %F = 1.413;
-        F;
+        F = 1.413;
+        
         %Results
         calcSNRTrack
 
@@ -85,7 +85,7 @@ classdef radarClass
             
             radar.rangeSearch = [30*10^3 300*10^3];
             radar.PPeak = 1*10^6; 
-            radar.duty_cycle = .03; %needs to be fixed
+            radar.duty_cycle = .2; %needs to be fixed
             radar.Pt = radar.PPeak*radar.duty_cycle;
             
             radar.antennaSizeX = 5;
@@ -237,7 +237,7 @@ classdef radarClass
         function radar = SNRTrack(radar,RCS)
             disp('stop');
             radar = GainCalc(radar);
-            radar.calcSNRTrack = radar.Pt.*radar.Gain.^2.*radar.lambda.*RCS(1).*1./((4*pi)^3.* ...
+            radar.calcSNRTrack = radar.Pt.*radar.Gain.*radar.lambda.*RCS(1).*1./((4*pi)^3.* ...
                 radar.rangeSearch.^4.*radar.k.*radar.To.*...
                 radar.F.*radar.bandWidthTrack.*radar.Ls);
         end
