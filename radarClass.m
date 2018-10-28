@@ -76,6 +76,7 @@ classdef radarClass
         
         %Results
         calcSNRTrack
+        calcSNRSearch
 
     end
     
@@ -235,12 +236,21 @@ classdef radarClass
         end 
         
         function radar = SNRTrack(radar,RCS)
-            disp('stop');
             radar = GainCalc(radar);
-            radar.calcSNRTrack = radar.Pt.*radar.Gain.*radar.lambda.*RCS(1).*1./((4*pi)^3.* ...
-                radar.rangeSearch.^4.*radar.k.*radar.To.*...
+            radar.calcSNRTrack = radar.Pt.*radar.Gain.^2.*radar.lambda.*RCS(1).*1./((4*pi)^3.* ...
+                radar.rangeTrack.^4.*radar.k.*radar.To.*...
                 radar.F.*radar.bandWidthTrack.*radar.Ls);
         end
+        
+        function radar = SNRSearch(radar,RCS)
+            disp('stop')
+            radar = GainCalc(radar);
+            radar.calcSNRSearch = radar.Pt.*radar.Ae.*RCS(1).*...
+                radar.TfsSearchMax./((4*pi).*radar.k.*radar.To.*...
+                radar.F.*radar.bandWidthTrack.*radar.Ls.*radar.rangeSearch.^4.*radar.solidAngleSearch);
+        end
+        
+        
         
         function radar = time_range(radar,  num_pulse, maxspeedRange, dragons_Tracked) 
            
