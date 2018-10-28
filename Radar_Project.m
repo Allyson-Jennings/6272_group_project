@@ -15,7 +15,6 @@ us = 10^-6;
 k = physconst("Boltzman");
 To = 290;
 F = 1.25; 
-G = 10; 
 
 
 
@@ -76,12 +75,12 @@ dewds2.nBeamsT = dewds2.beamCoverage(dewds2.solidAngleTrack, dewds2.beamWidthTra
 %% Search and Track TFS
 
 numPulses = 1:2;
-dewds1 = dewds1.time_range(0, max(dragon.speedRange), 0);
-dewds2 = dewds2.time_range(numPulses, max(dragon.speedRange), 25); %% too many dragons at this speed
-dewds2 = dewds2.time_range(numPulses, max(dragon.speedRange), 18); %% can only use 1 pulse, # of dragons okay
-dewds2 = dewds2.time_range(1, dragon.averageSpeed, 47); % we can use 1 pulse and track 48 avg speed dragons.
-dewds2 = dewds2.time_range(numPulses, dragon.averageSpeed, 23); % we can use 2 pulses and track 23 avg speed dragons
+dewds1 = dewds1.time_range(0, 40:50, max(dragon.speedRange), 0);
 
+dewds2 = dewds2.time_range(numPulses, 40:50, max(dragon.speedRange), 25); %% too many dragons at this speed
+dewds2 = dewds2.time_range(numPulses, 40:50, max(dragon.speedRange), 18); %% can only use 1 pulse, # of dragons okay
+dewds2 = dewds2.time_range(1, 40:50, dragon.averageSpeed, 47); % we can use 1 pulse and track 48 avg speed dragons.
+dewds2 = dewds2.time_range(numPulses, 40:50, dragon.averageSpeed, 20); % we can use 2 pulses and track 23 avg speed dragons
 
 
 %% Sweep Duty Cycles to see a range of Pave we can get

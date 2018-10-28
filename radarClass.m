@@ -181,7 +181,7 @@ classdef radarClass
         function Pave_sweep = sweep_Pave(radar, Pt, dutyCyc)
             Pave_sweep = Pt.*dutyCyc;
         end
-        function ae = areaEffective(radar, D) %%%not sure if this is correct?
+        function ae = areaEffective(radar, D) 
             ae = D^2; %piazza post Ae = efficiency * A, efficiency = 1 for our system; 
         end
         
@@ -228,59 +228,56 @@ classdef radarClass
         end 
         
         
-        function radar = time_range(radar,  num_pulse, maxspeedRange, dragons_Tracked) 
+        function radar = time_range(radar, num_pulse_Track, num_pulse_Search, ...
+            maxspeedRange, dragons_Tracked) 
             
             if radar.type == "dewds1"
                 %dwell determined by spin rate and el coverage
                 TDwell_Az = radar.beamWidthSearch / 2*pi*radar.antennaSpin/60 ;
-                numBeamsPerAz = radar.elCoverageS ./radar.beamWidthSearch;
+                numBeamsPerAz = radar.elCoverageS ./radar.beamWidthSearch
                 TDwell = TDwell_Az/numBeamsPerAz; 
                 radar.TDwellSearch = TDwell;
             else
                 %look at dwell for different num of pulses
-                TDwell = num_pulse.*(radar.PRISearch);
+                TDwell = num_pulse_Search.*(radar.PRISearch);
                 radar.TDwellSearch = TDwell;
             end 
             
-            M = radar.solidAngleSearch; 
+            M = radar.solidAngleSearch/4; % account for 4 dewds faces
            
-            radar.TfsSearchMin = TDwell.*M/(radar.beamWidthSearch)^2;
+            TfsSearchMin = TDwell.*M/(radar.beamWidthSearch)^2;
+            radar.TfsSearchMin = TfsSearchMin ;
             
             Crossrange_1beam = min(radar.rangeSearch)*(radar.beamWidthSearch);      % What is the crossrange distance of one beam? (theta/360 x circumference of 300m circle)
             threebeam_distance = Crossrange_1beam*3;  
             
             % Tfs search has to been such that you can search the whole
             % area before the dragon can move three beams
-            dragonTravelTime = threebeam_distance / maxspeedRange;
+            dragonTravelTime = threebeam_distance / maxspeedRange 
             
             radar.TfsSearchMax = dragonTravelTime;
             %Tfs = [Tfs1 Tfs2];
             
             if radar.type == "dewds2" 
-                TDwell = radar.PRITrack*num_pulse;
+                TDwell = radar.PRITrack*num_pulse_Track;
                 
                 Crossrange_1beam = min(radar.rangeTrack)*(radar.beamWidthTrack);      % What is the crossrange distance of one beam? (theta/360 x circumference of 300m circle)
-                threebeam_distance = Crossrange_1beam*3                  % Per spec, dragon not allowed to go more than three of these
+                threebeam_distance = Crossrange_1beam*3;                  % Per spec, dragon not allowed to go more than three of these
 
                 %number of cells to search
                 Rosette = 25;
 
                 revisit_time= dragons_Tracked.*TDwell.*Rosette;  % The time it takes to revist a tracked dragon (25 is the rosette squares for 3 beamwidths)
 
-                disTraveled =  maxspeedRange.*revisit_time
+                disTraveled =  maxspeedRange.*revisit_time;
                 
                 if (disTraveled <= threebeam_distance)
                     radar.TDwellTrack = TDwell;
                     %radar.num_pulse = num_pulse;
                 else 
-                    fprintf("Number of dragons is too high!")
-                end 
-                
-            end 
-            
-            
+                    fprintf("Number of dragons is too damn high!")
+                end        
+            end        
         end
-
     end
 end        
-
