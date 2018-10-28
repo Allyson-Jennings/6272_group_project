@@ -69,8 +69,13 @@ classdef radarClass
         k = physconst("Boltzman");
         To = 290;
         
-        %Losses 
         
+        %Losses 
+        Ls = 1;
+        F = 1.413;
+        
+        %Results
+        calcSNRTrack
 
     end
     
@@ -227,9 +232,16 @@ classdef radarClass
 
         end 
         
+        function radar = SNRTrack(radar,RCS)
+            disp('stop')
+            radar = GainCalc(radar);
+            radar.calcSNRTrack = radar.Pt.*radar.Gain.*radar.lambda.*RCS(1).*1./((4*pi)^3.* ...
+                radar.rangeSearch.*radar.k.*radar.To.*...
+                radar.F.*radar.bandWidthTrack.*radar.Ls);
+        end
         
         function radar = time_range(radar,  num_pulse, maxspeedRange, dragons_Tracked) 
-            
+           
             if radar.type == "dewds1"
                 %dwell determined by spin rate and el coverage
                 TDwell_Az = radar.beamWidthSearch / 2*pi*radar.antennaSpin/60 ;
