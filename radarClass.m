@@ -106,36 +106,38 @@ classdef radarClass
             if radar.type == "dewds1" 
                 radar.antennaSpin = 60; 
                 radar.numAntenna = 1;
-                
+                radar.freq = 0.5*10^9;
+                radar.duty_cycle = radar.calc_duty_cycle();
+
              
             elseif radar.type == "dewds2" 
                 radar.rangeTrack = [300 30*10^3];
                 radar.numAntenna = 4; 
                 radar.TpTrack = (2.*radar.R_rangeResTrack)./radar.c;
                 radar.bandWidthTrack = 1./radar.TpTrack;
+                radar.freq = 1*10^9;
+                radar.duty_cycle = 0.03;
                 
             end 
-            
-           
-            	radar.freq = 1*10^9;
+
+%             	radar.freq = 1*10^9;
                 radar.lambda = radar.c ./radar.freq;
                 radar.dopMax = (2*500)/radar.lambda;
                 radar.dopAvg = (2*200)/radar.lambda;
                 radar.PRFMaxMin = (4*500)/radar.lambda;
                 radar.PRFAvgMin = (4*200)/radar.lambda;
-                
-           
-            
            
         end
-        
-        
-        
+       
         function res = rangeResFunc(radar, Tp)
             res = (radar.c/2)*Tp;
         end 
         
-        
+        function duty_cycle = calc_duty_cycle(radar, range_res)
+            tau     = (radar.R_rangeResSearch)./(2*radar.c);
+            PRI     = (radar.rangeSearch)./(2*radar.c);
+            duty_cycle  = max(tau./PRI);
+        end
         
         function angle = elAngle(radar, range, alt)
             angle = atan(alt ./range);
@@ -233,7 +235,7 @@ classdef radarClass
         end 
         
         function radar = SNRTrack(radar,RCS)
-            disp('stop')
+            disp('stop');
             radar = GainCalc(radar);
             radar.calcSNRTrack = radar.Pt.*radar.Gain.^2.*radar.lambda.*RCS(1).*1./((4*pi)^3.* ...
                 radar.rangeSearch.^4.*radar.k.*radar.To.*...
@@ -245,8 +247,13 @@ classdef radarClass
             if radar.type == "dewds1"
                 %dwell determined by spin rate and el coverage
                 TDwell_Az = radar.beamWidthSearch / 2*pi*radar.antennaSpin/60 ;
-                numBeamsPerAz = radar.elCoverageS ./radar.beamWidthSearch;
+                
+                numBeamsPerAz = ceil(radar.elCoverageS ./radar.beamWidthSearch);
                 TDwell = TDwell_Az/numBeamsPerAz; 
+                                if numBeamsPerAz > TDwell/radar.PRISearch
+                                    disp('Frequeny is TOO HIGH')
+                                end     
+
                 radar.TDwellSearch = TDwell;
             else
                 %look at dwell for different num of pulses
@@ -272,7 +279,7 @@ classdef radarClass
                 TDwell = radar.PRITrack*num_pulse;
                 
                 Crossrange_1beam = min(radar.rangeTrack)*(radar.beamWidthTrack);      % What is the crossrange distance of one beam? (theta/360 x circumference of 300m circle)
-                threebeam_distance = Crossrange_1beam*3                  % Per spec, dragon not allowed to go more than three of these
+                threebeam_distance = Crossrange_1beam*3;                  % Per spec, dragon not allowed to go more than three of these
 
                 %number of cells to search
                 Rosette = 25;

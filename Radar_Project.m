@@ -99,3 +99,6 @@ xlabel('Duty Cycle (%)')
 ylabel('P_{ave} (kW)')
 grid on
 title('Avg Power from duty cycle')
+
+%  dewdrs1 = time_range(dewds1,  num_pulse, maxspeedRange, dragons_Tracked);
+dewds1 = dewds1.time_range(numPulses, max(dragon.speedRange), 18); %% can only use 1 pulse, # of dragons okay
