@@ -9,8 +9,8 @@ close all
 clear all
 close all
 
-moon = imread('TooHigh.png');
-imshow(moon);
+% moon = imread('TooHigh.png');
+% imshow(moon);
 
 %% constants 
 c = physconst("lightspeed"); 
@@ -95,6 +95,10 @@ pAve = dewds1.sweep_Pave(1e6, dutyCycle);
 dewds2 = dewds2.SNRTrack(dragon.RCSRange);
 dewds2 = dewds2.SNRSearch(dragon.RCSRange);
 testSNR = 10*log(dewds2.calcSNRSearch(1));
+
+dewds1 = dewds1.SNRTrack(dragon.RCSRange);
+dewds1 = dewds1.SNRSearch(dragon.RCSRange);
+testSNR = 10*log(dewds1.calcSNRSearch(1));
 
 figure
 plot(dutyCycle.*100, pAve./1e3)

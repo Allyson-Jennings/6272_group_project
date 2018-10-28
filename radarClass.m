@@ -86,8 +86,7 @@ classdef radarClass
             
             radar.rangeSearch = [30*10^3 300*10^3];
             radar.PPeak = 1*10^6; 
-            radar.duty_cycle = .2; %needs to be fixed
-            radar.Pt = radar.PPeak*radar.duty_cycle;
+%             radar.duty_cycle = .2; %needs to be fixed
             
             radar.antennaSizeX = 5;
             radar.antennaSizeY = 5; 
@@ -109,6 +108,7 @@ classdef radarClass
                 radar.numAntenna = 1;
                 radar.freq = 0.5*10^9;
                 radar.duty_cycle = radar.calc_duty_cycle();
+            radar.Pt = radar.PPeak*radar.duty_cycle;
 
              
             elseif radar.type == "dewds2" 
@@ -118,7 +118,8 @@ classdef radarClass
                 radar.bandWidthTrack = 1./radar.TpTrack;
                 radar.freq = 1*10^9;
                 radar.duty_cycle = 0.03;
-                
+                radar.Pt = radar.PPeak*radar.duty_cycle;
+
             end 
 
 %             	radar.freq = 1*10^9;
@@ -247,7 +248,7 @@ classdef radarClass
             radar = GainCalc(radar);
             radar.calcSNRSearch = radar.Pt.*radar.Ae.*RCS(1).*...
                 radar.TfsSearchMax./((4*pi).*radar.k.*radar.To.*...
-                radar.F.*radar.bandWidthTrack.*radar.Ls.*radar.rangeSearch.^4.*radar.solidAngleSearch);
+                radar.F.*radar.Ls.*radar.rangeSearch.^4.*radar.solidAngleSearch);
         end
         
         
@@ -296,7 +297,7 @@ classdef radarClass
 
                 revisit_time= dragons_Tracked.*TDwell.*Rosette;  % The time it takes to revist a tracked dragon (25 is the rosette squares for 3 beamwidths)
 
-                disTraveled =  maxspeedRange.*revisit_time
+                disTraveled =  maxspeedRange.*revisit_time;
                 
                 if (disTraveled <= threebeam_distance)
                     radar.TDwellTrack = TDwell;
