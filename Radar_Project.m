@@ -102,15 +102,15 @@ testSNR = 10*log10(dewds1.calcSNRSearch(1));
 
 dewds1.storage = calc_storage(dewds1);
 dewds2.storage = calc_storage(dewds2);
-figure
-plot(dutyCycle.*100, pAve./1e3)
-xlabel('Duty Cycle (%)')
-ylabel('P_{ave} (kW)')
-grid on
-title('Avg Power from duty cycle')
+% figure
+% plot(dutyCycle.*100, pAve./1e3)
+% xlabel('Duty Cycle (%)')
+% ylabel('P_{ave} (kW)')
+% grid on
+% title('Avg Power from duty cycle')
 
 %  dewdrs1 = time_range(dewds1,  num_pulse, maxspeedRange, dragons_Tracked);
 dewds1 = dewds1.time_range(numPulses, max(dragon.speedRange), 18); %% can only use 1 pulse, # of dragons okay
 
-dewds1.storage = calc_storage(dewds1, dragon);
+dewds1.storage = calc_storage(dewds1, dragon)
 dewds2.storage = calc_storage(dewds2, dragon)
