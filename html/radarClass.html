@@ -1,0 +1,735 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>radarClass</title><meta name="generator" content="MATLAB 9.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-10-29"><meta name="DC.source" content="radarClass.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Antenna Parameters</a></li><li><a href="#4">waveform Parameters</a></li><li><a href="#5">waveform Parameters for graphs</a></li><li><a href="#6">RRE parameters</a></li></ul></div><pre class="codeinput"><span class="keyword">classdef</span> radarClass
+    <span class="comment">%Class to store radar parameters, constants, and requirements</span>
+
+
+    <span class="keyword">properties</span>
+</pre><pre class="codeinput">        type <span class="comment">%dewds 1 or dewds 2</span>
+        <span class="comment">% Storage</span>
+        storage
+        <span class="comment">%Frequency</span>
+        dopMax
+        dopAvg
+</pre><h2 id="3">Antenna Parameters</h2><pre class="codeinput">        antennaSizeX
+        antennaSizeY
+        numAntenna
+        antennaSpin <span class="comment">% in rpm</span>
+        rangeRes
+        Ae
+</pre><h2 id="4">waveform Parameters</h2><pre class="codeinput">        TpTrack
+        TpSearch
+        PRISearch
+        PRITrack
+        freq
+        lambda
+        PRIPerDwell
+        bandWidthTrack
+        bandWidthSearch
+
+        TDwellSearch
+        TDwellTrack
+        TfsSearchMin
+        TfsSearchMax
+</pre><h2 id="5">waveform Parameters for graphs</h2><pre class="codeinput">        PRFAvgMin
+        PRFMaxMin
+</pre><h2 id="6">RRE parameters</h2><pre class="codeinput">        PPeak
+        Pt
+        Pt_track
+        duty_cycle
+        Gain
+
+        <span class="comment">%Range and az/El coverage</span>
+        rangeTrack
+        rangeSearch
+        azCoverage
+        elCoverageS <span class="comment">%search</span>
+        elCoverageT <span class="comment">%track</span>
+        solidAngleTrack
+        solidAngleSearch
+        beamWidthTrack
+        beamWidthSearch
+        nBeamsS
+        nBeamsT
+
+        <span class="comment">%requirments</span>
+        R_warningTime <span class="comment">% in seconds</span>
+        R_rangeResTrack <span class="comment">%in meters</span>
+        R_rangeResSearch
+        SNRmin_search
+        SNRmin_track
+
+        c = physconst(<span class="string">"lightspeed"</span>);
+        k = physconst(<span class="string">"Boltzman"</span>);
+        To = 290;
+
+
+        <span class="comment">%Losses</span>
+        Ls = 1;
+        F = 1.413;
+
+        <span class="comment">%Results</span>
+        calcSNRTrack
+        calcSNRSearch
+</pre><pre class="codeinput">    <span class="keyword">end</span>
+
+    methods
+
+        <span class="keyword">function</span> radar = radarClass(dewdsType, varFreqFlag)
+
+            radar.rangeSearch = [30*10^3 300*10^3];
+            radar.PPeak = 1*10^6;
+<span class="comment">%             radar.duty_cycle = .2; %needs to be fixed</span>
+
+            radar.antennaSizeX = 5;
+            radar.antennaSizeY = 5;
+            radar.azCoverage = 2*pi;
+            radar.Ae = radar.areaEffective(radar.antennaSizeX);
+
+            <span class="comment">% enter in required values</span>
+            radar.R_rangeResTrack = 10;
+            radar.R_rangeResSearch = 30;
+            radar.R_warningTime = 5*60;
+            radar.SNRmin_search = 10^(26/10);
+
+            radar.TpSearch = (2.*radar.R_rangeResSearch)./radar.c;
+            radar.bandWidthSearch = 1./radar.TpSearch;
+
+            radar.type = dewdsType;
+            <span class="keyword">if</span> radar.type == <span class="string">"dewds1"</span>
+                radar.antennaSpin = 60;
+                radar.numAntenna = 1;
+                radar.freq = 0.5*10^9;
+                radar.duty_cycle = radar.calc_duty_cycle();
+            radar.Pt = radar.PPeak*radar.duty_cycle;
+
+
+
+            <span class="keyword">elseif</span> radar.type == <span class="string">"dewds2"</span>
+                radar.rangeTrack = [300 30*10^3];
+                radar.numAntenna = 4;
+                radar.TpTrack = (2.*radar.R_rangeResTrack)./radar.c;
+                radar.bandWidthTrack = 1./radar.TpTrack;
+                radar.freq = 1*10^9;
+                radar.duty_cycle = radar.calc_duty_cycle();
+                radar.Pt = radar.PPeak*radar.duty_cycle;
+                radar.Pt_track = radar.PPeak*0.05 <span class="comment">%duty_cylce for track</span>
+
+            <span class="keyword">end</span>
+
+<span class="comment">%             	radar.freq = 1*10^9;</span>
+                radar.lambda = radar.c ./radar.freq;
+                radar.dopMax = (2*500)/radar.lambda;
+                radar.dopAvg = (2*200)/radar.lambda;
+                radar.PRFMaxMin = (4*500)/radar.lambda;
+                radar.PRFAvgMin = (4*200)/radar.lambda;
+
+        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> res = rangeResFunc(radar, Tp)
+            res = (radar.c/2)*Tp;
+        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> duty_cycle = calc_duty_cycle(radar)
+            tau     = (radar.R_rangeResSearch)./(2*radar.c);
+            PRI     = (radar.rangeSearch)./(2*radar.c);
+            duty_cycle  = max(tau./PRI);
+        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> duty_cycle = calc_duty_cycle_track(radar)
+            tau     = (radar.R_rangeResTrack)./(2*radar.c);
+            PRI     = (radar.rangeTrack)./(2*radar.c);
+            duty_cycle  = max(tau./PRI);
+        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> angle = elAngle(radar, range, alt)
+            angle = atan(alt ./range);
+        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> PRI = PRI_calc(radar, range)
+            PRI = 2*range/radar.c;
+        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> SA = solidAngle(radar, el)
+            SA = 2*pi*sin(el);
+        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> BW = beamWidth(radar, freq, D)
+            BW = 0.89*(radar.c./freq)./D;
+        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> BC = beamCoverage(radar, solidAngle, theta3, phi3)
+            BC = solidAngle./(theta3.*phi3);
+        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> BW = bandWidth(radar, Tp)
+            BW = 1./Tp;
+        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> BWCalc = BWCalculation(radar, c)
+            BWCalc = c/rangeRes;
+        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> priMax = PRI_max(radar, f, vmax)
+            priMax = (radar.c ./f)./(4*vmax);
+        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> prf = PRF(radar, PRI)
+            prf = 1./PRI;
+        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> radar = GainCalc(radar)
+            radar.Gain = 32400./(radar.beamWidthSearch.*<span class="keyword">...</span>
+                radar.beamWidthSearch*(180/pi)^2); <span class="comment">%note this must be BW in degrees</span>
+        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> Pavg = Pavg(radar,  PRI, B)
+         <span class="comment">%pavg = Pt*nPulses./(Td*B);</span>
+         Pavg = radar.PPeak*(1./B)*(1./PRI);
+        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> Pave_sweep = sweep_Pave(radar, Pt, dutyCyc)
+            Pave_sweep = Pt.*dutyCyc;
+        <span class="keyword">end</span>
+        <span class="keyword">function</span> ae = areaEffective(radar, D)
+            ae = D^2; <span class="comment">%piazza post Ae = efficiency * A, efficiency = 1 for our system;</span>
+        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> lhs = SNR_Track_LHS(radar, Pavg, G, Ae, Ls, F)
+            lhs = Pavg*G*Ae / Ls*F;
+        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> rhs = SNR_Track_RHS(radar, SNR, range, PRF, RCS)
+            rhs = SNR*(4*pi)^2 * range^4 * radar.k * radar.To * PRF / RCS <span class="keyword">...</span>
+                *1/Tfs;
+        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> lhs = SNR_Search_LHS(radar, PAvg, Ae, F, Ls)
+            lhs = PAvg.*Ae/(Ls * radar.To * F);
+        <span class="keyword">end</span>
+
+
+        <span class="keyword">function</span> rhs = SNR_Search_RHS(radar, dragon)
+            RCS = dragon.RCSRange(1);
+            rangeS = radar.rangeSearch(2);
+            SNRmin = radar.SNRmin_search;
+            num_pulse = SingBeamSNR(radar, RCS, SNRmin);
+            Tfs = radar.time_range(num_pulse, max(dragon.speedRange));
+            <span class="comment">% choose max dragon speed</span>
+            rhs = SNRmin*4*pi*(rangeS^4/RCS).*(radar.solidAngleSearch./Tfs);
+        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> td = Td(radar, updateRate, NTargets)
+            td = (updateRate*NTargets);
+        <span class="keyword">end</span>
+
+
+        <span class="keyword">function</span> radar = varFreq(radar, freq, vMax, vAvg)
+            radar.freq = freq;
+            radar.PRFMaxMin = radar.PRF(radar.PRI_max(radar.freq, vMax));
+            radar.PRFAvgMin = radar.PRF(radar.PRI_max(radar.freq, vAvg));
+            radar.beamWidthSearch = radar.beamWidth(freq, radar.antennaSizeX);
+
+            <span class="keyword">if</span> radar.type == <span class="string">"dewds2"</span>
+                radar.beamWidthTrack= radar.beamWidthSearch;
+            <span class="keyword">end</span>
+
+
+        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> radar = SNRTrack(radar,RCS)
+            radar = GainCalc(radar);
+            radar.calcSNRTrack = radar.Pt_track.*radar.Gain.^2.*radar.lambda.*RCS(1).*1./((4*pi)^3.* <span class="keyword">...</span>
+                radar.rangeTrack.^4.*radar.k.*radar.To.*<span class="keyword">...</span>
+                radar.F.*radar.bandWidthTrack.*radar.Ls);
+        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> radar = SNRSearch(radar,RCS)
+            disp(<span class="string">'stop'</span>)
+            radar = GainCalc(radar);
+            radar.calcSNRSearch = radar.Pt.*radar.Ae.*RCS(1).*<span class="keyword">...</span>
+                radar.TfsSearchMax./((4*pi).*radar.k.*radar.To.*<span class="keyword">...</span>
+                radar.F.*radar.Ls.*radar.rangeSearch.^4.*radar.solidAngleSearch);
+        <span class="keyword">end</span>
+
+
+
+        <span class="keyword">function</span> radar = time_range(radar,  num_pulse, maxspeedRange, dragons_Tracked)
+
+            <span class="keyword">if</span> radar.type == <span class="string">"dewds1"</span>
+                <span class="comment">%dwell determined by spin rate and el coverage</span>
+                TDwell_Az = radar.beamWidthSearch / 2*pi*radar.antennaSpin/60 ;
+
+                numBeamsPerAz = ceil(radar.elCoverageS ./radar.beamWidthSearch);
+                TDwell = TDwell_Az/numBeamsPerAz;
+                                <span class="keyword">if</span> numBeamsPerAz &gt; TDwell/radar.PRISearch
+                                    disp(<span class="string">'Frequeny is TOO HIGH'</span>)
+                                <span class="keyword">end</span>
+
+                radar.TDwellSearch = TDwell;
+            <span class="keyword">else</span>
+                <span class="comment">%look at dwell for different num of pulses</span>
+                TDwell = num_pulse.*(radar.PRISearch);
+                radar.TDwellSearch = TDwell;
+            <span class="keyword">end</span>
+
+            M = radar.solidAngleSearch;
+
+            radar.TfsSearchMin = TDwell.*M/(radar.beamWidthSearch)^2;
+
+            Crossrange_1beam = min(radar.rangeSearch)*(radar.beamWidthSearch);      <span class="comment">% What is the crossrange distance of one beam? (theta/360 x circumference of 300m circle)</span>
+            threebeam_distance = Crossrange_1beam*3;
+
+            <span class="comment">% Tfs search has to been such that you can search the whole</span>
+            <span class="comment">% area before the dragon can move three beams</span>
+            dragonTravelTime = threebeam_distance / maxspeedRange;
+
+            radar.TfsSearchMax = dragonTravelTime;
+            <span class="comment">%Tfs = [Tfs1 Tfs2];</span>
+
+            <span class="keyword">if</span> radar.type == <span class="string">"dewds2"</span>
+                TDwell = radar.PRITrack*num_pulse;
+
+                Crossrange_1beam = min(radar.rangeTrack)*(radar.beamWidthTrack);      <span class="comment">% What is the crossrange distance of one beam? (theta/360 x circumference of 300m circle)</span>
+                threebeam_distance = Crossrange_1beam*3;                  <span class="comment">% Per spec, dragon not allowed to go more than three of these</span>
+
+                <span class="comment">%number of cells to search</span>
+                Rosette = 25;
+
+                revisit_time= dragons_Tracked.*TDwell.*Rosette;  <span class="comment">% The time it takes to revist a tracked dragon (25 is the rosette squares for 3 beamwidths)</span>
+
+                disTraveled =  maxspeedRange.*revisit_time;
+
+                <span class="keyword">if</span> (disTraveled &lt;= threebeam_distance)
+                    radar.TDwellTrack = TDwell;
+                    <span class="comment">%radar.num_pulse = num_pulse;</span>
+                <span class="keyword">else</span>
+                    fprintf(<span class="string">"Number of dragons is too high!"</span>)
+                <span class="keyword">end</span>
+
+            <span class="keyword">end</span>
+
+
+        <span class="keyword">end</span>
+        <span class="keyword">function</span> storage = calc_storage(radar, dragon)
+            <span class="comment">%#Range bins x #beams x #NumPulsesPerDwell).</span>
+            <span class="comment">% Assume that complex values are stored as 2x8 byte (double)</span>
+            <span class="comment">% numbers in storage. (Note: 1 GB = 1024^3 = 2^30 bytes</span>
+            minTimeSearch   = abs(diff(radar.rangeSearch))./([200 500]);
+            storage = (2*8).*ceil(radar.nBeamsS).*ceil(abs(diff(radar.rangeSearch))./radar.R_rangeResSearch)*1./ <span class="keyword">...</span>
+                        2^30;
+                    storage = storage.*minTimeSearch;
+        <span class="keyword">end</span>
+
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><pre class="codeoutput error">Not enough input arguments.
+
+Error in radarClass (line 107)
+            radar.type = dewdsType;
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2017b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+
+classdef radarClass
+    %Class to store radar parameters, constants, and requirements
+   
+    
+    properties    
+  
+        type %dewds 1 or dewds 2
+        % Storage
+        storage
+        %Frequency
+        dopMax
+        dopAvg
+        
+        %% Antenna Parameters
+        antennaSizeX
+        antennaSizeY
+        numAntenna
+        antennaSpin % in rpm
+        rangeRes
+        Ae
+        
+        %% waveform Parameters 
+        TpTrack
+        TpSearch
+        PRISearch
+        PRITrack
+        freq
+        lambda
+        PRIPerDwell
+        bandWidthTrack
+        bandWidthSearch
+        
+        TDwellSearch
+        TDwellTrack
+        TfsSearchMin
+        TfsSearchMax
+        
+        %% waveform Parameters for graphs
+        PRFAvgMin
+        PRFMaxMin
+        
+        %% RRE parameters
+        PPeak
+        Pt
+        Pt_track
+        duty_cycle
+        Gain
+       
+        %Range and az/El coverage
+        rangeTrack
+        rangeSearch
+        azCoverage
+        elCoverageS %search
+        elCoverageT %track
+        solidAngleTrack
+        solidAngleSearch
+        beamWidthTrack
+        beamWidthSearch
+        nBeamsS
+        nBeamsT
+        
+        %requirments 
+        R_warningTime % in seconds 
+        R_rangeResTrack %in meters
+        R_rangeResSearch
+        SNRmin_search
+        SNRmin_track
+        
+        c = physconst("lightspeed");
+        k = physconst("Boltzman");
+        To = 290;
+        
+        
+        %Losses 
+        Ls = 1;
+        F = 1.413;
+        
+        %Results
+        calcSNRTrack
+        calcSNRSearch
+
+    end
+    
+    methods
+        
+        function radar = radarClass(dewdsType, varFreqFlag)
+            
+            radar.rangeSearch = [30*10^3 300*10^3];
+            radar.PPeak = 1*10^6; 
+%             radar.duty_cycle = .2; %needs to be fixed
+            
+            radar.antennaSizeX = 5;
+            radar.antennaSizeY = 5; 
+            radar.azCoverage = 2*pi;
+            radar.Ae = radar.areaEffective(radar.antennaSizeX);
+            
+            % enter in required values
+            radar.R_rangeResTrack = 10;
+            radar.R_rangeResSearch = 30; 
+            radar.R_warningTime = 5*60;
+            radar.SNRmin_search = 10^(26/10);
+            
+            radar.TpSearch = (2.*radar.R_rangeResSearch)./radar.c;
+            radar.bandWidthSearch = 1./radar.TpSearch;
+            
+            radar.type = dewdsType;
+            if radar.type == "dewds1" 
+                radar.antennaSpin = 60; 
+                radar.numAntenna = 1;
+                radar.freq = 0.5*10^9;
+                radar.duty_cycle = radar.calc_duty_cycle();
+            radar.Pt = radar.PPeak*radar.duty_cycle;
+            
+
+             
+            elseif radar.type == "dewds2" 
+                radar.rangeTrack = [300 30*10^3];
+                radar.numAntenna = 4; 
+                radar.TpTrack = (2.*radar.R_rangeResTrack)./radar.c;
+                radar.bandWidthTrack = 1./radar.TpTrack;
+                radar.freq = 1*10^9;
+                radar.duty_cycle = radar.calc_duty_cycle();
+                radar.Pt = radar.PPeak*radar.duty_cycle;
+                radar.Pt_track = radar.PPeak*0.05 %duty_cylce for track
+
+            end 
+
+%             	radar.freq = 1*10^9;
+                radar.lambda = radar.c ./radar.freq;
+                radar.dopMax = (2*500)/radar.lambda;
+                radar.dopAvg = (2*200)/radar.lambda;
+                radar.PRFMaxMin = (4*500)/radar.lambda;
+                radar.PRFAvgMin = (4*200)/radar.lambda;
+           
+        end
+       
+        function res = rangeResFunc(radar, Tp)
+            res = (radar.c/2)*Tp;
+        end 
+        
+        function duty_cycle = calc_duty_cycle(radar)
+            tau     = (radar.R_rangeResSearch)./(2*radar.c);
+            PRI     = (radar.rangeSearch)./(2*radar.c);
+            duty_cycle  = max(tau./PRI);
+        end
+        
+        function duty_cycle = calc_duty_cycle_track(radar)
+            tau     = (radar.R_rangeResTrack)./(2*radar.c);
+            PRI     = (radar.rangeTrack)./(2*radar.c);
+            duty_cycle  = max(tau./PRI);
+        end
+        
+        function angle = elAngle(radar, range, alt)
+            angle = atan(alt ./range);
+        end 
+        
+        function PRI = PRI_calc(radar, range) 
+            PRI = 2*range/radar.c;
+        end 
+        
+        function SA = solidAngle(radar, el) 
+            SA = 2*pi*sin(el);
+        end 
+        
+        function BW = beamWidth(radar, freq, D)
+            BW = 0.89*(radar.c./freq)./D;
+        end 
+        
+        function BC = beamCoverage(radar, solidAngle, theta3, phi3) 
+            BC = solidAngle./(theta3.*phi3);
+        end 
+        
+        function BW = bandWidth(radar, Tp)
+            BW = 1./Tp; 
+        end 
+        
+        function BWCalc = BWCalculation(radar, c)
+            BWCalc = c/rangeRes;
+        end
+                
+        function priMax = PRI_max(radar, f, vmax)
+            priMax = (radar.c ./f)./(4*vmax);
+        end 
+        
+        function prf = PRF(radar, PRI)
+            prf = 1./PRI;
+        end 
+        
+        function radar = GainCalc(radar)             
+            radar.Gain = 32400./(radar.beamWidthSearch.*...
+                radar.beamWidthSearch*(180/pi)^2); %note this must be BW in degrees
+        end
+        
+        function Pavg = Pavg(radar,  PRI, B) 
+         %pavg = Pt*nPulses./(Td*B);
+         Pavg = radar.PPeak*(1./B)*(1./PRI); 
+        end 
+        
+        function Pave_sweep = sweep_Pave(radar, Pt, dutyCyc)
+            Pave_sweep = Pt.*dutyCyc;
+        end
+        function ae = areaEffective(radar, D)
+            ae = D^2; %piazza post Ae = efficiency * A, efficiency = 1 for our system; 
+        end
+        
+        function lhs = SNR_Track_LHS(radar, Pavg, G, Ae, Ls, F)
+            lhs = Pavg*G*Ae / Ls*F; 
+        end 
+        
+        function rhs = SNR_Track_RHS(radar, SNR, range, PRF, RCS)
+            rhs = SNR*(4*pi)^2 * range^4 * radar.k * radar.To * PRF / RCS ...
+                *1/Tfs; 
+        end 
+        
+        function lhs = SNR_Search_LHS(radar, PAvg, Ae, F, Ls)
+            lhs = PAvg.*Ae/(Ls * radar.To * F);
+        end 
+        
+        
+        function rhs = SNR_Search_RHS(radar, dragon)
+            RCS = dragon.RCSRange(1);
+            rangeS = radar.rangeSearch(2);
+            SNRmin = radar.SNRmin_search;
+            num_pulse = SingBeamSNR(radar, RCS, SNRmin);
+            Tfs = radar.time_range(num_pulse, max(dragon.speedRange)); 
+            % choose max dragon speed
+            rhs = SNRmin*4*pi*(rangeS^4/RCS).*(radar.solidAngleSearch./Tfs);
+        end 
+        
+        function td = Td(radar, updateRate, NTargets)
+            td = (updateRate*NTargets);
+        end 
+
+     
+        function radar = varFreq(radar, freq, vMax, vAvg)
+            radar.freq = freq;
+            radar.PRFMaxMin = radar.PRF(radar.PRI_max(radar.freq, vMax));
+            radar.PRFAvgMin = radar.PRF(radar.PRI_max(radar.freq, vAvg));
+            radar.beamWidthSearch = radar.beamWidth(freq, radar.antennaSizeX);
+
+            if radar.type == "dewds2" 
+                radar.beamWidthTrack= radar.beamWidthSearch;
+            end 
+            
+
+        end 
+        
+        function radar = SNRTrack(radar,RCS)
+            radar = GainCalc(radar);
+            radar.calcSNRTrack = radar.Pt_track.*radar.Gain.^2.*radar.lambda.*RCS(1).*1./((4*pi)^3.* ...
+                radar.rangeTrack.^4.*radar.k.*radar.To.*...
+                radar.F.*radar.bandWidthTrack.*radar.Ls);
+        end
+        
+        function radar = SNRSearch(radar,RCS)
+            disp('stop')
+            radar = GainCalc(radar);
+            radar.calcSNRSearch = radar.Pt.*radar.Ae.*RCS(1).*...
+                radar.TfsSearchMax./((4*pi).*radar.k.*radar.To.*...
+                radar.F.*radar.Ls.*radar.rangeSearch.^4.*radar.solidAngleSearch);
+        end
+        
+        
+        
+        function radar = time_range(radar,  num_pulse, maxspeedRange, dragons_Tracked) 
+           
+            if radar.type == "dewds1"
+                %dwell determined by spin rate and el coverage
+                TDwell_Az = radar.beamWidthSearch / 2*pi*radar.antennaSpin/60 ;
+                
+                numBeamsPerAz = ceil(radar.elCoverageS ./radar.beamWidthSearch);
+                TDwell = TDwell_Az/numBeamsPerAz; 
+                                if numBeamsPerAz > TDwell/radar.PRISearch
+                                    disp('Frequeny is TOO HIGH')
+                                end     
+
+                radar.TDwellSearch = TDwell;
+            else
+                %look at dwell for different num of pulses
+                TDwell = num_pulse.*(radar.PRISearch);
+                radar.TDwellSearch = TDwell;
+            end 
+            
+            M = radar.solidAngleSearch; 
+           
+            radar.TfsSearchMin = TDwell.*M/(radar.beamWidthSearch)^2;
+            
+            Crossrange_1beam = min(radar.rangeSearch)*(radar.beamWidthSearch);      % What is the crossrange distance of one beam? (theta/360 x circumference of 300m circle)
+            threebeam_distance = Crossrange_1beam*3;  
+            
+            % Tfs search has to been such that you can search the whole
+            % area before the dragon can move three beams
+            dragonTravelTime = threebeam_distance / maxspeedRange;
+            
+            radar.TfsSearchMax = dragonTravelTime;
+            %Tfs = [Tfs1 Tfs2];
+            
+            if radar.type == "dewds2" 
+                TDwell = radar.PRITrack*num_pulse;
+                
+                Crossrange_1beam = min(radar.rangeTrack)*(radar.beamWidthTrack);      % What is the crossrange distance of one beam? (theta/360 x circumference of 300m circle)
+                threebeam_distance = Crossrange_1beam*3;                  % Per spec, dragon not allowed to go more than three of these
+
+                %number of cells to search
+                Rosette = 25;
+
+                revisit_time= dragons_Tracked.*TDwell.*Rosette;  % The time it takes to revist a tracked dragon (25 is the rosette squares for 3 beamwidths)
+
+                disTraveled =  maxspeedRange.*revisit_time;
+                
+                if (disTraveled <= threebeam_distance)
+                    radar.TDwellTrack = TDwell;
+                    %radar.num_pulse = num_pulse;
+                else 
+                    fprintf("Number of dragons is too high!")
+                end 
+                
+            end 
+            
+            
+        end
+        function storage = calc_storage(radar, dragon)
+            %#Range bins x #beams x #NumPulsesPerDwell). 
+            % Assume that complex values are stored as 2x8 byte (double) 
+            % numbers in storage. (Note: 1 GB = 1024^3 = 2^30 bytes
+            minTimeSearch   = abs(diff(radar.rangeSearch))./([200 500]);
+            storage = (2*8).*ceil(radar.nBeamsS).*ceil(abs(diff(radar.rangeSearch))./radar.R_rangeResSearch)*1./ ...
+                        2^30;
+                    storage = storage.*minTimeSearch;
+        end
+
+    end
+end        
+
+
+##### SOURCE END #####
+--></body></html>

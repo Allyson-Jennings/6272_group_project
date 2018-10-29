@@ -1,0 +1,404 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Radar_Project</title><meta name="generator" content="MATLAB 9.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-10-29"><meta name="DC.source" content="Radar_Project.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">constants</a></li><li><a href="#3">dragon defintions</a></li><li><a href="#4">set paramters, create radar objects</a></li><li><a href="#5">calculation requirements</a></li><li><a href="#6">Search and Track TFS</a></li><li><a href="#7">Sweep Duty Cycles to see a range of Pave we can get</a></li></ul></div><pre class="codeinput">import <span class="string">radarClass</span>
+<span class="comment">% Authors:</span>
+<span class="comment">% Rachel Roley</span>
+<span class="comment">% Eleni Spring</span>
+<span class="comment">% Ally Jennings</span>
+<span class="comment">% Sarah Preston</span>
+
+close <span class="string">all</span>
+clear <span class="string">all</span>
+close <span class="string">all</span>
+
+<span class="comment">% moon = imread('TooHigh.png');</span>
+<span class="comment">% imshow(moon);</span>
+</pre><h2 id="2">constants</h2><pre class="codeinput">c = physconst(<span class="string">"lightspeed"</span>);
+km = 10^3;
+us = 10^-6;
+k = physconst(<span class="string">"Boltzman"</span>);
+To = 290;
+F = 1.25;
+G = 10;
+</pre><h2 id="3">dragon defintions</h2><pre class="codeinput">dragon.lengthRange = [10 30];
+dragon.RCSRange = [1 20];
+dragon.speedRange = [0  500];
+dragon.averageSpeed = 200;
+dragon.maxAltitude = 15*km;
+
+bewilderbeast.RCS = 1000;
+bewilderbeast.maxSpeed = 100;
+</pre><h2 id="4">set paramters, create radar objects</h2><pre class="codeinput">dewds1 = radarClass(<span class="string">"dewds1"</span>);
+dewds2 = radarClass(<span class="string">"dewds2"</span>);
+</pre><pre class="codeoutput">
+radar = 
+
+  radarClass with properties:
+
+                type: "dewds2"
+             storage: []
+              dopMax: []
+              dopAvg: []
+        antennaSizeX: 5
+        antennaSizeY: 5
+          numAntenna: 4
+         antennaSpin: []
+            rangeRes: []
+                  Ae: 25
+             TpTrack: 6.6713e-08
+            TpSearch: 2.0014e-07
+           PRISearch: []
+            PRITrack: []
+                freq: 1.0000e+09
+              lambda: []
+         PRIPerDwell: []
+      bandWidthTrack: 1.4990e+07
+     bandWidthSearch: 4.9965e+06
+        TDwellSearch: []
+         TDwellTrack: []
+        TfsSearchMin: []
+        TfsSearchMax: []
+           PRFAvgMin: []
+           PRFMaxMin: []
+               PPeak: 1000000
+                  Pt: 1000
+            Pt_track: 50000
+          duty_cycle: 1.0000e-03
+                Gain: []
+          rangeTrack: [300 30000]
+         rangeSearch: [30000 300000]
+          azCoverage: 6.2832
+         elCoverageS: []
+         elCoverageT: []
+     solidAngleTrack: []
+    solidAngleSearch: []
+      beamWidthTrack: []
+     beamWidthSearch: []
+             nBeamsS: []
+             nBeamsT: []
+       R_warningTime: 300
+     R_rangeResTrack: 10
+    R_rangeResSearch: 30
+       SNRmin_search: 398.1072
+        SNRmin_track: []
+                   c: 299792458
+                   k: 1.3807e-23
+                  To: 290
+                  Ls: 1
+                   F: 1.4130
+        calcSNRTrack: []
+       calcSNRSearch: []
+
+</pre><h2 id="5">calculation requirements</h2><pre class="codeinput"><span class="comment">% required el angle</span>
+dewds1.elCoverageS = dewds1.elAngle(min(dewds1.rangeSearch), dragon.maxAltitude);
+
+dewds2.elCoverageS = dewds2.elAngle(min(dewds2.rangeSearch), dragon.maxAltitude);
+dewds2.elCoverageT = dewds2.elAngle(min(dewds2.rangeTrack), dragon.maxAltitude);
+
+<span class="comment">%min PRI</span>
+dewds1.PRISearch = dewds1.PRI_calc(max(dewds1.rangeSearch));
+dewds1.PRIPerDwell = dewds1.beamWidthSearch/dewds1.PRISearch;
+
+dewds2.PRISearch = dewds2.PRI_calc(max(dewds2.rangeSearch));
+dewds2.PRITrack = dewds2.PRI_calc(max(dewds2.rangeTrack));
+
+<span class="comment">%total solid Angle coverage</span>
+dewds1.solidAngleSearch = dewds1.solidAngle(dewds1.elCoverageS);
+dewds2.solidAngleSearch = dewds2.solidAngle(dewds2.elCoverageS);
+dewds2.solidAngleTrack = dewds2.solidAngle(dewds2.elCoverageT);
+
+<span class="comment">%beamWidth</span>
+<span class="comment">%beamWidth @ 1 GHz</span>
+GHz = 1*10^9;
+
+dewds1BW_preCalc = dewds1.beamWidth(1*GHz, dewds1.antennaSizeX);
+dewds2BW_preCalc = dewds2.beamWidth(1*GHz, dewds2.antennaSizeX);
+
+
+<span class="comment">%beamwidth for Radar Freq</span>
+dewds1.beamWidthSearch = dewds1.beamWidth(dewds1.freq, dewds1.antennaSizeX);
+dewds2.beamWidthSearch = dewds2.beamWidth(dewds2.freq, dewds2.antennaSizeX);
+dewds2.beamWidthTrack = dewds2.beamWidth(dewds2.freq, dewds2.antennaSizeX);
+
+
+dewds1.nBeamsS = dewds1.beamCoverage(dewds1.solidAngleSearch, dewds1.beamWidthSearch, dewds1.beamWidthSearch);
+dewds2.nBeamsS = dewds2.beamCoverage(dewds2.solidAngleSearch, dewds2.beamWidthSearch, dewds2.beamWidthSearch);
+dewds2.nBeamsT = dewds2.beamCoverage(dewds2.solidAngleTrack, dewds2.beamWidthTrack, dewds2.beamWidthTrack);
+</pre><h2 id="6">Search and Track TFS</h2><pre class="codeinput">numPulses = 1:2;
+dewds1 = dewds1.time_range(0, max(dragon.speedRange), 0);
+dewds2 = dewds2.time_range(numPulses, max(dragon.speedRange), 25); <span class="comment">%% too many dragons at this speed</span>
+dewds2 = dewds2.time_range(numPulses, max(dragon.speedRange), 18); <span class="comment">%% can only use 1 pulse, # of dragons okay</span>
+dewds2 = dewds2.time_range(1, dragon.averageSpeed, 47); <span class="comment">% we can use 1 pulse and track 48 avg speed dragons.</span>
+dewds2 = dewds2.time_range(numPulses, dragon.averageSpeed, 23); <span class="comment">% we can use 2 pulses and track 23 avg speed dragons</span>
+</pre><pre class="codeoutput">Number of dragons is too high!Number of dragons is too high!</pre><h2 id="7">Sweep Duty Cycles to see a range of Pave we can get</h2><pre class="codeinput">dutyCycle = 0.1:0.1:0.5;        <span class="comment">% 10% - 50% duty cycle in 10% increments</span>
+pAve = dewds1.sweep_Pave(1e6, dutyCycle);
+
+dewds2 = dewds2.SNRTrack(dragon.RCSRange);
+dewds2 = dewds2.SNRSearch(dragon.RCSRange);
+testSNR = 10*log10(dewds2.calcSNRSearch(1));
+
+dewds1 = dewds1.SNRSearch(dragon.RCSRange);
+testSNR = 10*log10(dewds1.calcSNRSearch(1));
+
+
+dewds1.storage = calc_storage(dewds1);
+dewds2.storage = calc_storage(dewds2);
+figure
+plot(dutyCycle.*100, pAve./1e3)
+xlabel(<span class="string">'Duty Cycle (%)'</span>)
+ylabel(<span class="string">'P_{ave} (kW)'</span>)
+grid <span class="string">on</span>
+title(<span class="string">'Avg Power from duty cycle'</span>)
+
+<span class="comment">%  dewdrs1 = time_range(dewds1,  num_pulse, maxspeedRange, dragons_Tracked);</span>
+dewds1 = dewds1.time_range(numPulses, max(dragon.speedRange), 18); <span class="comment">%% can only use 1 pulse, # of dragons okay</span>
+
+dewds1.storage = calc_storage(dewds1, dragon);
+dewds2.storage = calc_storage(dewds2, dragon)
+</pre><pre class="codeoutput">stop
+stop
+
+dewds2 = 
+
+  radarClass with properties:
+
+                type: "dewds2"
+             storage: [178.6955 71.4782]
+              dopMax: 3.3356e+03
+              dopAvg: 1.3343e+03
+        antennaSizeX: 5
+        antennaSizeY: 5
+          numAntenna: 4
+         antennaSpin: []
+            rangeRes: []
+                  Ae: 25
+             TpTrack: 6.6713e-08
+            TpSearch: 2.0014e-07
+           PRISearch: 0.0020
+            PRITrack: 2.0014e-04
+                freq: 1.0000e+09
+              lambda: 0.2998
+         PRIPerDwell: []
+      bandWidthTrack: 1.4990e+07
+     bandWidthSearch: 4.9965e+06
+        TDwellSearch: [0.0020 0.0040]
+         TDwellTrack: [2.0014e-04 4.0028e-04]
+        TfsSearchMin: [1.9749 3.9498]
+        TfsSearchMax: 24.0134
+           PRFAvgMin: 2.6685e+03
+           PRFMaxMin: 6.6713e+03
+               PPeak: 1000000
+                  Pt: 1000
+            Pt_track: 50000
+          duty_cycle: 1.0000e-03
+                Gain: 3.4659e+03
+          rangeTrack: [300 30000]
+         rangeSearch: [30000 300000]
+          azCoverage: 6.2832
+         elCoverageS: 0.4636
+         elCoverageT: 1.5508
+     solidAngleTrack: 6.2819
+    solidAngleSearch: 2.8099
+      beamWidthTrack: 0.0534
+     beamWidthSearch: 0.0534
+             nBeamsS: 986.7644
+             nBeamsT: 2.2060e+03
+       R_warningTime: 300
+     R_rangeResTrack: 10
+    R_rangeResSearch: 30
+       SNRmin_search: 398.1072
+        SNRmin_track: []
+                   c: 299792458
+                   k: 1.3807e-23
+                  To: 290
+                  Ls: 1
+                   F: 1.4130
+        calcSNRTrack: [1.3210e+11 1.3210e+03]
+       calcSNRSearch: [3.7100e+06 371.0049]
+
+</pre><img vspace="5" hspace="5" src="Radar_Project_01.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2017b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+import radarClass
+% Authors: 
+% Rachel Roley
+% Eleni Spring
+% Ally Jennings 
+% Sarah Preston 
+
+close all
+clear all
+close all
+
+% moon = imread('TooHigh.png');
+% imshow(moon);
+
+%% constants 
+c = physconst("lightspeed"); 
+km = 10^3;
+us = 10^-6;
+k = physconst("Boltzman");
+To = 290;
+F = 1.25; 
+G = 10; 
+
+
+
+%% dragon defintions 
+dragon.lengthRange = [10 30];
+dragon.RCSRange = [1 20];
+dragon.speedRange = [0  500]; 
+dragon.averageSpeed = 200;
+dragon.maxAltitude = 15*km;
+
+bewilderbeast.RCS = 1000;
+bewilderbeast.maxSpeed = 100;
+
+
+%% set paramters, create radar objects
+dewds1 = radarClass("dewds1");
+dewds2 = radarClass("dewds2");
+
+%% calculation requirements
+
+% required el angle
+dewds1.elCoverageS = dewds1.elAngle(min(dewds1.rangeSearch), dragon.maxAltitude);
+
+dewds2.elCoverageS = dewds2.elAngle(min(dewds2.rangeSearch), dragon.maxAltitude);
+dewds2.elCoverageT = dewds2.elAngle(min(dewds2.rangeTrack), dragon.maxAltitude);
+
+%min PRI 
+dewds1.PRISearch = dewds1.PRI_calc(max(dewds1.rangeSearch));
+dewds1.PRIPerDwell = dewds1.beamWidthSearch/dewds1.PRISearch;
+
+dewds2.PRISearch = dewds2.PRI_calc(max(dewds2.rangeSearch));
+dewds2.PRITrack = dewds2.PRI_calc(max(dewds2.rangeTrack));
+
+%total solid Angle coverage
+dewds1.solidAngleSearch = dewds1.solidAngle(dewds1.elCoverageS);
+dewds2.solidAngleSearch = dewds2.solidAngle(dewds2.elCoverageS);
+dewds2.solidAngleTrack = dewds2.solidAngle(dewds2.elCoverageT);
+
+%beamWidth
+%beamWidth @ 1 GHz
+GHz = 1*10^9;
+
+dewds1BW_preCalc = dewds1.beamWidth(1*GHz, dewds1.antennaSizeX);
+dewds2BW_preCalc = dewds2.beamWidth(1*GHz, dewds2.antennaSizeX);
+
+
+%beamwidth for Radar Freq
+dewds1.beamWidthSearch = dewds1.beamWidth(dewds1.freq, dewds1.antennaSizeX);
+dewds2.beamWidthSearch = dewds2.beamWidth(dewds2.freq, dewds2.antennaSizeX);
+dewds2.beamWidthTrack = dewds2.beamWidth(dewds2.freq, dewds2.antennaSizeX);
+
+
+dewds1.nBeamsS = dewds1.beamCoverage(dewds1.solidAngleSearch, dewds1.beamWidthSearch, dewds1.beamWidthSearch);
+dewds2.nBeamsS = dewds2.beamCoverage(dewds2.solidAngleSearch, dewds2.beamWidthSearch, dewds2.beamWidthSearch);
+dewds2.nBeamsT = dewds2.beamCoverage(dewds2.solidAngleTrack, dewds2.beamWidthTrack, dewds2.beamWidthTrack);
+
+
+%% Search and Track TFS
+
+numPulses = 1:2;
+dewds1 = dewds1.time_range(0, max(dragon.speedRange), 0);
+dewds2 = dewds2.time_range(numPulses, max(dragon.speedRange), 25); %% too many dragons at this speed
+dewds2 = dewds2.time_range(numPulses, max(dragon.speedRange), 18); %% can only use 1 pulse, # of dragons okay
+dewds2 = dewds2.time_range(1, dragon.averageSpeed, 47); % we can use 1 pulse and track 48 avg speed dragons.
+dewds2 = dewds2.time_range(numPulses, dragon.averageSpeed, 23); % we can use 2 pulses and track 23 avg speed dragons
+
+
+
+%% Sweep Duty Cycles to see a range of Pave we can get
+dutyCycle = 0.1:0.1:0.5;        % 10% - 50% duty cycle in 10% increments
+pAve = dewds1.sweep_Pave(1e6, dutyCycle);
+
+dewds2 = dewds2.SNRTrack(dragon.RCSRange);
+dewds2 = dewds2.SNRSearch(dragon.RCSRange);
+testSNR = 10*log10(dewds2.calcSNRSearch(1));
+
+dewds1 = dewds1.SNRSearch(dragon.RCSRange);
+testSNR = 10*log10(dewds1.calcSNRSearch(1));
+
+
+dewds1.storage = calc_storage(dewds1);
+dewds2.storage = calc_storage(dewds2);
+figure
+plot(dutyCycle.*100, pAve./1e3)
+xlabel('Duty Cycle (%)')
+ylabel('P_{ave} (kW)')
+grid on
+title('Avg Power from duty cycle')
+
+%  dewdrs1 = time_range(dewds1,  num_pulse, maxspeedRange, dragons_Tracked);
+dewds1 = dewds1.time_range(numPulses, max(dragon.speedRange), 18); %% can only use 1 pulse, # of dragons okay
+
+dewds1.storage = calc_storage(dewds1, dragon);
+dewds2.storage = calc_storage(dewds2, dragon)
+##### SOURCE END #####
+--></body></html>

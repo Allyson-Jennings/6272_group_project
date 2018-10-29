@@ -200,7 +200,7 @@ classdef radarClass
         function Pave_sweep = sweep_Pave(radar, Pt, dutyCyc)
             Pave_sweep = Pt.*dutyCyc;
         end
-        function ae = areaEffective(radar, D) %%%not sure if this is correct?
+        function ae = areaEffective(radar, D)
             ae = D^2; %piazza post Ae = efficiency * A, efficiency = 1 for our system; 
         end
         
