@@ -94,12 +94,14 @@ pAve = dewds1.sweep_Pave(1e6, dutyCycle);
 
 dewds2 = dewds2.SNRTrack(dragon.RCSRange);
 dewds2 = dewds2.SNRSearch(dragon.RCSRange);
-testSNR = 10*log(dewds2.calcSNRSearch(1));
+testSNR = 10*log10(dewds2.calcSNRSearch(1));
 
 dewds1 = dewds1.SNRTrack(dragon.RCSRange);
 dewds1 = dewds1.SNRSearch(dragon.RCSRange);
-testSNR = 10*log(dewds1.calcSNRSearch(1));
+testSNR = 10*log10(dewds1.calcSNRSearch(1));
 
+dewds1.storage = calc_storage(dewds1);
+dewds2.storage = calc_storage(dewds2);
 figure
 plot(dutyCycle.*100, pAve./1e3)
 xlabel('Duty Cycle (%)')
@@ -109,3 +111,6 @@ title('Avg Power from duty cycle')
 
 %  dewdrs1 = time_range(dewds1,  num_pulse, maxspeedRange, dragons_Tracked);
 dewds1 = dewds1.time_range(numPulses, max(dragon.speedRange), 18); %% can only use 1 pulse, # of dragons okay
+
+dewds1.storage = calc_storage(dewds1, dragon);
+dewds2.storage = calc_storage(dewds2, dragon)

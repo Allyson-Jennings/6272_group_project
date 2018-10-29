@@ -6,7 +6,8 @@ classdef radarClass
     properties    
   
         type %dewds 1 or dewds 2
-        
+        % Storage
+        storage
         %Frequency
         dopMax
         dopAvg
@@ -135,9 +136,15 @@ classdef radarClass
             res = (radar.c/2)*Tp;
         end 
         
-        function duty_cycle = calc_duty_cycle(radar, range_res)
+        function duty_cycle = calc_duty_cycle(radar)
             tau     = (radar.R_rangeResSearch)./(2*radar.c);
             PRI     = (radar.rangeSearch)./(2*radar.c);
+            duty_cycle  = max(tau./PRI);
+        end
+        
+        function duty_cycle = calc_duty_cycle_track(radar)
+            tau     = (radar.R_rangeResTrack)./(2*radar.c);
+            PRI     = (radar.rangeTrack)./(2*radar.c);
             duty_cycle  = max(tau./PRI);
         end
         
@@ -309,6 +316,15 @@ classdef radarClass
             end 
             
             
+        end
+        function storage = calc_storage(radar, dragon)
+            %#Range bins x #beams x #NumPulsesPerDwell). 
+            % Assume that complex values are stored as 2x8 byte (double) 
+            % numbers in storage. (Note: 1 GB = 1024^3 = 2^30 bytes
+            minTimeSearch   = abs(diff(radar.rangeSearch))./([200 500]);
+            storage = (2*8).*ceil(radar.nBeamsS).*ceil(abs(diff(radar.rangeSearch))./radar.R_rangeResSearch)*1./ ...
+                        2^30;
+                    storage = storage.*minTimeSearch;
         end
 
     end
