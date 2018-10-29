@@ -102,6 +102,7 @@ end
 
 if varFreqFlag == 1 
 plot(dewds1.beamWidthSearch,dewds1.freq)
+set(gca,'FontSize',30)
 title('fc vs Beamwidth')
 xlabel('Beamwidth')
 ylabel('fc')
