@@ -43,6 +43,7 @@ classdef radarClass
         %% RRE parameters
         PPeak
         Pt
+        Pt_track
         duty_cycle
         Gain
        
@@ -110,6 +111,7 @@ classdef radarClass
                 radar.freq = 0.5*10^9;
                 radar.duty_cycle = radar.calc_duty_cycle();
             radar.Pt = radar.PPeak*radar.duty_cycle;
+            
 
              
             elseif radar.type == "dewds2" 
@@ -118,8 +120,9 @@ classdef radarClass
                 radar.TpTrack = (2.*radar.R_rangeResTrack)./radar.c;
                 radar.bandWidthTrack = 1./radar.TpTrack;
                 radar.freq = 1*10^9;
-                radar.duty_cycle = 0.03;
+                radar.duty_cycle = radar.calc_duty_cycle();
                 radar.Pt = radar.PPeak*radar.duty_cycle;
+                radar.Pt_track = radar.PPeak*0.05 %duty_cylce for track
 
             end 
 
@@ -245,7 +248,7 @@ classdef radarClass
         
         function radar = SNRTrack(radar,RCS)
             radar = GainCalc(radar);
-            radar.calcSNRTrack = radar.Pt.*radar.Gain.^2.*radar.lambda.*RCS(1).*1./((4*pi)^3.* ...
+            radar.calcSNRTrack = radar.Pt_track.*radar.Gain.^2.*radar.lambda.*RCS(1).*1./((4*pi)^3.* ...
                 radar.rangeTrack.^4.*radar.k.*radar.To.*...
                 radar.F.*radar.bandWidthTrack.*radar.Ls);
         end

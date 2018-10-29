@@ -96,9 +96,9 @@ dewds2 = dewds2.SNRTrack(dragon.RCSRange);
 dewds2 = dewds2.SNRSearch(dragon.RCSRange);
 testSNR = 10*log10(dewds2.calcSNRSearch(1));
 
-dewds1 = dewds1.SNRTrack(dragon.RCSRange);
 dewds1 = dewds1.SNRSearch(dragon.RCSRange);
 testSNR = 10*log10(dewds1.calcSNRSearch(1));
+
 
 dewds1.storage = calc_storage(dewds1);
 dewds2.storage = calc_storage(dewds2);
