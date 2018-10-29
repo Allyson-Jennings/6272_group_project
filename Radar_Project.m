@@ -94,11 +94,11 @@ pAve = dewds1.sweep_Pave(1e6, dutyCycle);
 
 dewds2 = dewds2.SNRTrack(dragon.RCSRange);
 dewds2 = dewds2.SNRSearch(dragon.RCSRange);
-testSNR = 10*log(dewds2.calcSNRSearch(1));
+testSNR = 10*log10(dewds2.calcSNRSearch(2))
+testSNR2 = 10*log10(dewds2.calcSNRTrack(2))
 
-dewds1 = dewds1.SNRTrack(dragon.RCSRange);
 dewds1 = dewds1.SNRSearch(dragon.RCSRange);
-testSNR = 10*log(dewds1.calcSNRSearch(1));
+testSNR3 = 10*log10(dewds1.calcSNRSearch(2))
 
 figure
 plot(dutyCycle.*100, pAve./1e3)
